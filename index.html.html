@@ -1,0 +1,629 @@
+<!-- NUTS! Project VDR — single-file app -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FDF8EF;
+    --card:#FFFFFF;
+    --ink:#3E2A1A;
+    --ink-soft:#7A6350;
+    --acorn:#E9A63C;
+    --acorn-deep:#C77F17;
+    --leaf:#7BA05B;
+    --leaf-deep:#5C7F41;
+    --shell:#EADFCE;
+    --rust:#B65C2E;
+    --radius:18px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--paper);color:var(--ink);font-family:'Nunito',sans-serif;font-size:16px;line-height:1.55;min-height:100vh}
+  h1,h2,h3,.display{font-family:'Baloo 2',cursive}
+  button{font-family:'Nunito',sans-serif;cursor:pointer}
+  input,textarea,select{font-family:'Nunito',sans-serif;font-size:15px;color:var(--ink)}
+  a{color:var(--leaf-deep)}
+  .wrap{max-width:880px;margin:0 auto;padding:0 16px 90px}
+
+  /* ---------- gate ---------- */
+  #gate{position:fixed;inset:0;background:var(--paper);display:flex;align-items:center;justify-content:center;z-index:100;padding:20px}
+  .gate-card{background:var(--card);border:3px solid var(--shell);border-radius:24px;padding:40px 32px;max-width:380px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(62,42,26,.10)}
+  .wordmark{font-family:'Baloo 2',cursive;font-weight:800;font-size:52px;letter-spacing:1px;color:var(--ink);display:inline-block;transform:rotate(-3deg);line-height:1}
+  .wordmark .bang{color:var(--acorn);display:inline-block;transform:rotate(8deg)}
+  .gate-card p{color:var(--ink-soft);margin:10px 0 22px}
+  .gate-card input{width:100%;padding:13px 16px;border:2px solid var(--shell);border-radius:14px;font-size:17px;text-align:center;letter-spacing:2px;outline:none}
+  .gate-card input:focus{border-color:var(--acorn)}
+  .gate-err{color:var(--rust);font-size:14px;min-height:20px;margin-top:8px;font-weight:700}
+  .btn{background:var(--acorn);color:#fff;border:none;border-radius:14px;padding:12px 22px;font-size:16px;font-weight:800;transition:transform .12s,background .12s}
+  .btn:hover{background:var(--acorn-deep);transform:translateY(-1px)}
+  .btn:focus-visible{outline:3px solid var(--leaf);outline-offset:2px}
+  .btn.green{background:var(--leaf)} .btn.green:hover{background:var(--leaf-deep)}
+  .btn.ghost{background:transparent;color:var(--ink-soft);border:2px solid var(--shell)}
+  .btn.ghost:hover{background:var(--shell);transform:none}
+  .btn.small{padding:7px 14px;font-size:14px;border-radius:11px}
+  .gate-card .btn{width:100%;margin-top:14px}
+
+  /* ---------- header & tabs ---------- */
+  header{padding:26px 16px 6px;text-align:center}
+  header .wordmark{font-size:44px}
+  header .sub{color:var(--ink-soft);font-weight:700;font-size:14px;letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
+  nav{position:sticky;top:0;background:var(--paper);z-index:50;padding:12px 8px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;border-bottom:2px solid var(--shell)}
+  nav button{background:transparent;border:2px solid transparent;border-radius:999px;padding:8px 16px;font-weight:800;font-size:15px;color:var(--ink-soft)}
+  nav button:hover{background:var(--shell)}
+  nav button.on{background:var(--ink);color:var(--paper)}
+  nav button:focus-visible{outline:3px solid var(--acorn);outline-offset:2px}
+
+  /* ---------- sections & cards ---------- */
+  section{display:none;padding-top:24px}
+  section.on{display:block;animation:pop .25s ease}
+  @keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){section.on{animation:none}.btn:hover{transform:none}}
+  .card{background:var(--card);border:2px solid var(--shell);border-radius:var(--radius);padding:22px;margin-bottom:18px}
+  .card h2{font-size:24px;margin-bottom:6px}
+  .card h3{font-size:18px}
+  .muted{color:var(--ink-soft)}
+  .row{display:flex;gap:18px;flex-wrap:wrap}
+  .row>.card{flex:1 1 260px;margin-bottom:0}
+  .pill{display:inline-block;background:var(--shell);border-radius:999px;padding:3px 12px;font-size:12.5px;font-weight:800;color:var(--ink-soft)}
+  .pill.green{background:#E4EDD9;color:var(--leaf-deep)}
+  .pill.gold{background:#FBEBCB;color:var(--acorn-deep)}
+
+  /* ---------- acorn meter ---------- */
+  .goal-flex{display:flex;gap:26px;align-items:center;flex-wrap:wrap}
+  .goal-nums{flex:1;min-width:200px}
+  .goal-nums .big{font-family:'Baloo 2',cursive;font-weight:800;font-size:44px;color:var(--leaf-deep);line-height:1}
+  .goal-nums .of{font-size:17px;color:var(--ink-soft);font-weight:700}
+
+  /* ---------- countdown ---------- */
+  .count{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px}
+  .count div{background:var(--paper);border:2px solid var(--shell);border-radius:14px;padding:10px 14px;text-align:center;min-width:70px}
+  .count b{font-family:'Baloo 2',cursive;font-size:28px;display:block;line-height:1.1}
+  .count span{font-size:12px;color:var(--ink-soft);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+
+  /* ---------- activity ---------- */
+  .act{list-style:none}
+  .act li{padding:10px 0;border-bottom:1.5px dashed var(--shell);font-size:15px;display:flex;gap:10px;align-items:baseline}
+  .act li:last-child{border:none}
+  .act .when{margin-left:auto;font-size:12.5px;color:var(--ink-soft);white-space:nowrap}
+
+  /* ---------- discussions ---------- */
+  .chan-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .chan-tabs button{border:2px solid var(--shell);background:var(--card);border-radius:12px;padding:7px 14px;font-weight:800;font-size:14px;color:var(--ink-soft)}
+  .chan-tabs button.on{border-color:var(--leaf);background:#F0F5E9;color:var(--leaf-deep)}
+  .thread{background:var(--card);border:2px solid var(--shell);border-radius:var(--radius);margin-bottom:14px;overflow:hidden}
+  .thread-head{padding:16px 18px;cursor:pointer;display:flex;gap:10px;align-items:baseline}
+  .thread-head:hover{background:#FCF5E8}
+  .thread-head h3{flex:1}
+  .thread-body{padding:0 18px 16px;display:none}
+  .thread.open .thread-body{display:block}
+  .post{padding:12px 14px;background:var(--paper);border-radius:12px;margin-bottom:10px}
+  .post .meta{font-size:12.5px;color:var(--ink-soft);font-weight:800;margin-bottom:3px}
+  .reply{margin-left:22px}
+  .composer textarea,.composer input{width:100%;border:2px solid var(--shell);border-radius:12px;padding:10px 12px;outline:none;resize:vertical;margin-bottom:8px}
+  .composer textarea:focus,.composer input:focus{border-color:var(--acorn)}
+
+  /* ---------- documents ---------- */
+  .folder-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .folder-tabs button{border:2px solid var(--shell);background:var(--card);border-radius:12px;padding:7px 14px;font-weight:800;font-size:14px;color:var(--ink-soft)}
+  .folder-tabs button.on{border-color:var(--acorn);background:#FBEBCB;color:var(--acorn-deep)}
+  .doc{display:flex;gap:12px;align-items:flex-start;padding:14px 0;border-bottom:1.5px dashed var(--shell)}
+  .doc:last-child{border:none}
+  .doc .ic{font-size:22px;line-height:1.3}
+  .doc h3 a{color:var(--ink);text-decoration:none}
+  .doc h3 a:hover{color:var(--acorn-deep);text-decoration:underline}
+  .doc p{font-size:14.5px;color:var(--ink-soft)}
+  .doc .meta{font-size:12.5px;color:var(--ink-soft);margin-top:2px}
+
+  /* ---------- team ---------- */
+  .member{display:flex;gap:14px;align-items:center;padding:12px 0;border-bottom:1.5px dashed var(--shell)}
+  .member:last-child{border:none}
+  .avatar{width:44px;height:44px;border-radius:50%;background:var(--acorn);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Baloo 2',cursive;font-weight:800;font-size:19px;flex:none}
+  .member .info{flex:1}
+  .member .role{font-size:13.5px;color:var(--ink-soft);font-weight:700}
+  .member .contact{font-size:13.5px;color:var(--leaf-deep)}
+
+  /* ---------- modal ---------- */
+  .modal-bg{position:fixed;inset:0;background:rgba(62,42,26,.45);display:none;align-items:center;justify-content:center;z-index:200;padding:18px}
+  .modal-bg.on{display:flex}
+  .modal{background:var(--card);border-radius:22px;padding:28px;max-width:520px;width:100%;max-height:86vh;overflow-y:auto}
+  .modal h2{margin-bottom:12px}
+  .modal label{display:block;font-weight:800;font-size:14px;margin:12px 0 5px}
+  .modal input,.modal textarea,.modal select{width:100%;border:2px solid var(--shell);border-radius:12px;padding:10px 12px;outline:none}
+  .modal input:focus,.modal textarea:focus{border-color:var(--acorn)}
+  .modal .actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+  .howto ol{padding-left:20px;margin:8px 0}
+  .howto li{margin-bottom:6px}
+  .howto h3{margin-top:14px}
+
+  .footer-note{text-align:center;font-size:12.5px;color:var(--ink-soft);margin-top:30px}
+  .loading{text-align:center;padding:30px;color:var(--ink-soft);font-weight:700}
+  .empty{padding:18px 0;color:var(--ink-soft);font-style:italic}
+  .topbar{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+</style>
+
+<!-- ================= GATE ================= -->
+<div id="gate">
+  <div class="gate-card">
+    <div class="wordmark">NUTS<span class="bang">!</span></div>
+    <p>Project workspace · invitation only</p>
+    <input id="gate-input" type="password" placeholder="Access code" autocomplete="off">
+    <div class="gate-err" id="gate-err"></div>
+    <button class="btn" onclick="tryUnlock()">Crack it open</button>
+  </div>
+</div>
+
+<!-- ================= APP ================= -->
+<div id="app" style="display:none">
+  <header>
+    <div class="wordmark">NUTS<span class="bang">!</span></div>
+    <div class="sub">Children's Game Project · Playing for Charity</div>
+  </header>
+
+  <nav>
+    <button data-tab="dash" class="on" onclick="showTab('dash')">🏠 Dashboard</button>
+    <button data-tab="disc" onclick="showTab('disc')">💬 Discussions</button>
+    <button data-tab="docs" onclick="showTab('docs')">📁 Documents</button>
+    <button data-tab="team" onclick="showTab('team')">🐿️ Team</button>
+    <button data-tab="about" onclick="showTab('about')">🌰 About</button>
+  </nav>
+
+  <div class="wrap">
+
+    <!-- ---------- DASHBOARD ---------- -->
+    <section id="tab-dash" class="on">
+      <div class="card">
+        <div class="goal-flex">
+          <svg id="acorn-svg" width="120" height="150" viewBox="0 0 120 150" role="img" aria-label="Fundraising acorn meter">
+            <defs>
+              <clipPath id="acorn-clip">
+                <path d="M60 42 C30 42 18 62 18 88 C18 118 40 142 60 142 C80 142 102 118 102 88 C102 62 90 42 60 42 Z"/>
+              </clipPath>
+            </defs>
+            <path d="M60 42 C30 42 18 62 18 88 C18 118 40 142 60 142 C80 142 102 118 102 88 C102 62 90 42 60 42 Z" fill="#F3E9D7" stroke="#C77F17" stroke-width="3"/>
+            <rect id="acorn-fill" x="18" y="142" width="84" height="0" fill="#7BA05B" clip-path="url(#acorn-clip)"/>
+            <path d="M60 42 C30 42 18 62 18 88 C18 118 40 142 60 142 C80 142 102 118 102 88 C102 62 90 42 60 42 Z" fill="none" stroke="#C77F17" stroke-width="3"/>
+            <path d="M26 44 C26 26 42 14 60 14 C78 14 94 26 94 44 C94 50 90 54 60 54 C30 54 26 50 26 44 Z" fill="#E9A63C" stroke="#C77F17" stroke-width="3"/>
+            <path d="M60 14 C60 8 64 4 70 4" fill="none" stroke="#5C7F41" stroke-width="5" stroke-linecap="round"/>
+          </svg>
+          <div class="goal-nums">
+            <span class="pill gold">Fundraising goal</span>
+            <div class="big" id="raised-amt">$0</div>
+            <div class="of">raised of <b id="goal-amt">$500</b> profit goal</div>
+            <p class="muted" style="font-size:14px;margin-top:6px">Every dollar of profit goes to charity. Hit the goal and we go from there!</p>
+            <button class="btn ghost small" style="margin-top:10px" onclick="editRaised()">Update amount</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="card">
+          <span class="pill green">Launch target</span>
+          <h2 style="margin-top:6px">Thanksgiving 2026</h2>
+          <div class="count" id="countdown"></div>
+        </div>
+        <div class="card">
+          <span class="pill">Mission</span>
+          <p id="mission-short" style="margin-top:8px;font-weight:600">We're building a children's game, selling a limited run, and giving the profits to charity. Full mission statement coming soon — see the About tab.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Latest activity</h2>
+        <ul class="act" id="activity"><li class="loading">Loading…</li></ul>
+      </div>
+    </section>
+
+    <!-- ---------- DISCUSSIONS ---------- -->
+    <section id="tab-disc">
+      <div class="topbar">
+        <h2 class="display" style="font-size:26px">Discussions</h2>
+        <button class="btn small" onclick="openThreadModal()">+ New thread</button>
+      </div>
+      <div class="chan-tabs" id="chan-tabs"></div>
+      <div id="thread-list"><div class="loading">Loading…</div></div>
+    </section>
+
+    <!-- ---------- DOCUMENTS ---------- -->
+    <section id="tab-docs">
+      <div class="topbar">
+        <h2 class="display" style="font-size:26px">Documents</h2>
+        <div style="display:flex;gap:8px">
+          <button class="btn ghost small" onclick="openModal('howto-modal')">How to link a file</button>
+          <button class="btn small" onclick="openModal('doc-modal')">+ Add document</button>
+        </div>
+      </div>
+      <div class="folder-tabs" id="folder-tabs"></div>
+      <div class="card" id="doc-list"><div class="loading">Loading…</div></div>
+    </section>
+
+    <!-- ---------- TEAM ---------- -->
+    <section id="tab-team">
+      <div class="topbar">
+        <h2 class="display" style="font-size:26px">Team</h2>
+        <button class="btn small" onclick="openModal('team-modal')">+ Add yourself</button>
+      </div>
+      <div class="card" id="team-list"><div class="loading">Loading…</div></div>
+    </section>
+
+    <!-- ---------- ABOUT ---------- -->
+    <section id="tab-about">
+      <div class="card">
+        <h2>Our mission</h2>
+        <p id="mission-full">Full mission statement coming soon. In short: NUTS! is a small, big-hearted project. We're designing a children's game, producing and selling it in a limited run, and donating the profits to charity. First goal: $500 in profit — then we grow from there.</p>
+      </div>
+      <div class="card">
+        <h2>The company</h2>
+        <p><b>NUTS! LLC</b> · Florida limited liability company · Effective August 26, 2026</p>
+        <p class="muted" style="margin-top:6px">Charity partner and fund-use details will be posted here once finalized.</p>
+      </div>
+      <div class="card">
+        <h2>How this site works</h2>
+        <p>This is our shared project room. Everything posted here — discussions, document links, team info — is visible to everyone with the access code. Nothing here is private, so keep truly sensitive details (personal financial info, passwords) out. Post in <b>Discussions</b>, link files in <b>Documents</b>, and add yourself to the <b>Team</b> page so we know who's who.</p>
+      </div>
+    </section>
+
+    <div class="footer-note">NUTS! project room · shared workspace — all members see the same content</div>
+  </div>
+</div>
+
+<!-- ================= MODALS ================= -->
+<div class="modal-bg" id="name-modal">
+  <div class="modal">
+    <h2>Who's there? 🐿️</h2>
+    <p class="muted">Your name is shown on your posts so the team knows who said what.</p>
+    <label for="name-input">Your name</label>
+    <input id="name-input" placeholder="e.g. Sam R.">
+    <div class="actions"><button class="btn" onclick="saveName()">That's me</button></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="thread-modal">
+  <div class="modal">
+    <h2>New thread</h2>
+    <label for="th-chan">Channel</label>
+    <select id="th-chan"></select>
+    <label for="th-title">Title</label>
+    <input id="th-title" placeholder="What's this about?">
+    <label for="th-body">First post</label>
+    <textarea id="th-body" rows="4" placeholder="Kick off the conversation…"></textarea>
+    <div class="actions">
+      <button class="btn ghost" onclick="closeModal('thread-modal')">Cancel</button>
+      <button class="btn green" onclick="createThread()">Post thread</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="doc-modal">
+  <div class="modal">
+    <h2>Add a document</h2>
+    <label for="doc-folder">Folder</label>
+    <select id="doc-folder"></select>
+    <label for="doc-title">Title</label>
+    <input id="doc-title" placeholder="e.g. Game rules draft v2">
+    <label for="doc-url">Link (Google Drive, Dropbox, etc.)</label>
+    <input id="doc-url" placeholder="https://…  (optional if you paste notes below)">
+    <label for="doc-desc">Description / notes</label>
+    <textarea id="doc-desc" rows="3" placeholder="What is it? Anything to know?"></textarea>
+    <div class="actions">
+      <button class="btn ghost" onclick="closeModal('doc-modal')">Cancel</button>
+      <button class="btn green" onclick="addDoc()">Add document</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="team-modal">
+  <div class="modal">
+    <h2>Add yourself to the team</h2>
+    <label for="tm-name">Name</label>
+    <input id="tm-name">
+    <label for="tm-role">Role on the project</label>
+    <input id="tm-role" placeholder="e.g. Game design, Marketing, Finance">
+    <label for="tm-contact">Contact (email or phone — optional)</label>
+    <input id="tm-contact">
+    <div class="actions">
+      <button class="btn ghost" onclick="closeModal('team-modal')">Cancel</button>
+      <button class="btn green" onclick="addMember()">Add me</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="howto-modal">
+  <div class="modal howto">
+    <h2>Linking a file from Drive or Dropbox</h2>
+    <p class="muted">Files live in your cloud storage; this site holds the link. Two minutes, tops.</p>
+    <h3>📗 Google Drive</h3>
+    <ol>
+      <li>Upload your file to Drive (drag it into <a href="https://drive.google.com" target="_blank" rel="noopener">drive.google.com</a>).</li>
+      <li>Right-click the file → <b>Share</b>.</li>
+      <li>Under "General access," change <b>Restricted</b> to <b>Anyone with the link</b> (leave as Viewer).</li>
+      <li>Click <b>Copy link</b>, then paste it into "Add document" here.</li>
+    </ol>
+    <h3>📘 Dropbox</h3>
+    <ol>
+      <li>Upload your file at <a href="https://dropbox.com" target="_blank" rel="noopener">dropbox.com</a>.</li>
+      <li>Hover over the file → click <b>Share</b> (or Copy link).</li>
+      <li>Make sure the link setting is <b>Anyone with this link can view</b>.</li>
+      <li>Copy the link and paste it into "Add document" here.</li>
+    </ol>
+    <p class="muted" style="margin-top:10px">Tip: name files clearly (e.g. <i>NUTS-budget-v3.xlsx</i>) so the list stays tidy.</p>
+    <div class="actions"><button class="btn" onclick="closeModal('howto-modal')">Got it</button></div>
+  </div>
+</div>
+
+<script>
+/* ================= config ================= */
+const CODE = 'NUTS!';
+const GOAL = 500;
+const LAUNCH = new Date('2026-11-26T00:00:00');
+const CHANNELS = [
+  {id:'general', label:'🌰 General'},
+  {id:'design',  label:'🎲 Game Design'},
+  {id:'marketing', label:'📣 Marketing & Sales'},
+  {id:'fundraising', label:'💚 Fundraising'}
+];
+const FOLDERS = [
+  {id:'design', label:'🎲 Game Design', ic:'🎲'},
+  {id:'legal',  label:'📜 Business & Legal', ic:'📜'},
+  {id:'marketing', label:'📣 Marketing', ic:'📣'},
+  {id:'financials', label:'💵 Financials', ic:'💵'},
+  {id:'misc', label:'📦 Misc', ic:'📦'}
+];
+
+let me = '';
+let curChan = 'general';
+let curFolder = 'design';
+let threadsCache = {}, docsCache = [], teamCache = [], settingsCache = {raised:0};
+
+/* ================= storage helpers ================= */
+async function sGet(key, shared, fallback){
+  try{ const r = await window.storage.get(key, shared); return r ? JSON.parse(r.value) : fallback; }
+  catch(e){ return fallback; }
+}
+async function sSet(key, val, shared){
+  try{ await window.storage.set(key, JSON.stringify(val), shared); return true; }
+  catch(e){ alert('Hmm — that didn\'t save. Check your connection and try again.'); return false; }
+}
+
+/* ================= gate ================= */
+function normalize(s){ return (s||'').trim().toUpperCase().replace(/\s+/g,''); }
+function unlock(){
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  boot();
+}
+function tryUnlock(){
+  const v = normalize(document.getElementById('gate-input').value);
+  if(v === 'NUTS!' || v === 'NUTS'){ unlock(); }
+  else{
+    document.getElementById('gate-err').textContent = 'Not quite — ask a team member for the code.';
+    document.getElementById('gate-input').value = '';
+  }
+}
+document.getElementById('gate-input').addEventListener('keydown', e=>{ if(e.key==='Enter') tryUnlock(); });
+
+(function autoUnlock(){
+  try{
+    const p = new URLSearchParams(location.search).get('code');
+    if(p && (normalize(decodeURIComponent(p))==='NUTS!' || normalize(decodeURIComponent(p))==='NUTS')) unlock();
+  }catch(e){}
+})();
+
+/* ================= boot ================= */
+async function boot(){
+  me = await sGet('displayName', false, '');
+  if(!me) openModal('name-modal');
+  buildChanTabs(); buildFolderTabs(); fillSelects();
+  startCountdown();
+  await refreshAll();
+}
+async function refreshAll(){
+  settingsCache = await sGet('settings', true, {raised:0});
+  renderGoal();
+  const loads = CHANNELS.map(async c=>{ threadsCache[c.id] = await sGet('threads-'+c.id, true, []); });
+  await Promise.all(loads);
+  docsCache = await sGet('docs', true, []);
+  teamCache = await sGet('team', true, []);
+  renderThreads(); renderDocs(); renderTeam(); renderActivity();
+}
+
+/* ================= identity ================= */
+async function saveName(){
+  const v = document.getElementById('name-input').value.trim();
+  if(!v){ return; }
+  me = v.slice(0,40);
+  await sSet('displayName', me, false);
+  closeModal('name-modal');
+}
+
+/* ================= tabs & modals ================= */
+function showTab(id){
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on', b.dataset.tab===id));
+  document.querySelectorAll('section').forEach(s=>s.classList.toggle('on', s.id==='tab-'+id));
+  refreshAll(); // pick up teammates' new posts on every tab switch
+}
+function openModal(id){ document.getElementById(id).classList.add('on'); }
+function closeModal(id){ document.getElementById(id).classList.remove('on'); }
+function needName(){ if(!me){ openModal('name-modal'); return true; } return false; }
+
+/* ================= dashboard ================= */
+function renderGoal(){
+  const raised = Number(settingsCache.raised)||0;
+  document.getElementById('raised-amt').textContent = '$' + raised.toLocaleString();
+  document.getElementById('goal-amt').textContent = '$' + GOAL.toLocaleString();
+  const pct = Math.max(0, Math.min(1, raised/GOAL));
+  const H = 100; // fillable height of acorn body (y 42→142)
+  const h = Math.round(H*pct);
+  const fill = document.getElementById('acorn-fill');
+  fill.setAttribute('height', h);
+  fill.setAttribute('y', 142-h);
+}
+async function editRaised(){
+  if(needName()) return;
+  const v = prompt('Amount raised so far (numbers only):', settingsCache.raised||0);
+  if(v===null) return;
+  const n = Number(String(v).replace(/[^0-9.]/g,''));
+  if(isNaN(n)){ alert('Numbers only, please.'); return; }
+  settingsCache.raised = n;
+  if(await sSet('settings', settingsCache, true)) renderGoal();
+}
+function startCountdown(){
+  const el = document.getElementById('countdown');
+  function tick(){
+    let ms = LAUNCH - new Date();
+    if(ms <= 0){ el.innerHTML = '<div><b>🎉</b><span>Launched!</span></div>'; return; }
+    const d = Math.floor(ms/86400000), h = Math.floor(ms/3600000)%24, m = Math.floor(ms/60000)%60;
+    el.innerHTML = `<div><b>${d}</b><span>days</span></div><div><b>${h}</b><span>hours</span></div><div><b>${m}</b><span>mins</span></div>`;
+  }
+  tick(); setInterval(tick, 30000);
+}
+
+/* ================= discussions ================= */
+function buildChanTabs(){
+  document.getElementById('chan-tabs').innerHTML = CHANNELS.map(c=>
+    `<button data-c="${c.id}" class="${c.id===curChan?'on':''}" onclick="pickChan('${c.id}')">${c.label}</button>`).join('');
+}
+function pickChan(id){ curChan=id; buildChanTabs(); renderThreads(); }
+function fillSelects(){
+  document.getElementById('th-chan').innerHTML = CHANNELS.map(c=>`<option value="${c.id}">${c.label.replace(/^\S+\s/,'')}</option>`).join('');
+  document.getElementById('doc-folder').innerHTML = FOLDERS.map(f=>`<option value="${f.id}">${f.label.replace(/^\S+\s/,'')}</option>`).join('');
+}
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function ago(ts){
+  const s = (Date.now()-ts)/1000;
+  if(s<60) return 'just now';
+  if(s<3600) return Math.floor(s/60)+'m ago';
+  if(s<86400) return Math.floor(s/3600)+'h ago';
+  return new Date(ts).toLocaleDateString(undefined,{month:'short',day:'numeric'});
+}
+function renderThreads(){
+  const list = threadsCache[curChan] || [];
+  const el = document.getElementById('thread-list');
+  if(!list.length){ el.innerHTML = '<div class="card empty">No threads here yet — start the first one!</div>'; return; }
+  el.innerHTML = list.slice().sort((a,b)=>b.ts-a.ts).map(t=>`
+    <div class="thread" id="t-${t.id}">
+      <div class="thread-head" onclick="toggleThread('${t.id}')">
+        <h3>${esc(t.title)}</h3>
+        <span class="pill">${1+(t.replies?.length||0)} post${(t.replies?.length||0)?'s':''}</span>
+      </div>
+      <div class="thread-body">
+        <div class="post"><div class="meta">${esc(t.author)} · ${ago(t.ts)}</div>${esc(t.body)}</div>
+        ${(t.replies||[]).map(r=>`<div class="post reply"><div class="meta">${esc(r.author)} · ${ago(r.ts)}</div>${esc(r.body)}</div>`).join('')}
+        <div class="composer">
+          <textarea id="re-${t.id}" rows="2" placeholder="Write a reply…"></textarea>
+          <button class="btn green small" onclick="reply('${t.id}')">Reply</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function toggleThread(id){ document.getElementById('t-'+id).classList.toggle('open'); }
+function openThreadModal(){
+  if(needName()) return;
+  document.getElementById('th-chan').value = curChan;
+  document.getElementById('th-title').value=''; document.getElementById('th-body').value='';
+  openModal('thread-modal');
+}
+async function createThread(){
+  const chan = document.getElementById('th-chan').value;
+  const title = document.getElementById('th-title').value.trim();
+  const body = document.getElementById('th-body').value.trim();
+  if(!title || !body){ alert('A title and a first post get things rolling.'); return; }
+  const fresh = await sGet('threads-'+chan, true, []);
+  fresh.push({id:Date.now().toString(36), title, body, author:me, ts:Date.now(), replies:[]});
+  if(await sSet('threads-'+chan, fresh, true)){
+    threadsCache[chan]=fresh; curChan=chan;
+    closeModal('thread-modal'); buildChanTabs(); renderThreads(); renderActivity();
+  }
+}
+async function reply(tid){
+  if(needName()) return;
+  const box = document.getElementById('re-'+tid);
+  const body = box.value.trim();
+  if(!body) return;
+  const fresh = await sGet('threads-'+curChan, true, []);
+  const t = fresh.find(x=>x.id===tid);
+  if(!t){ alert('That thread just moved — refreshing.'); refreshAll(); return; }
+  (t.replies = t.replies||[]).push({author:me, body, ts:Date.now()});
+  if(await sSet('threads-'+curChan, fresh, true)){
+    threadsCache[curChan]=fresh; renderThreads();
+    document.getElementById('t-'+tid).classList.add('open');
+  }
+}
+
+/* ================= documents ================= */
+function buildFolderTabs(){
+  document.getElementById('folder-tabs').innerHTML = FOLDERS.map(f=>
+    `<button class="${f.id===curFolder?'on':''}" onclick="pickFolder('${f.id}')">${f.label}</button>`).join('');
+}
+function pickFolder(id){ curFolder=id; buildFolderTabs(); renderDocs(); }
+function renderDocs(){
+  const list = docsCache.filter(d=>d.folder===curFolder).sort((a,b)=>b.ts-a.ts);
+  const el = document.getElementById('doc-list');
+  const f = FOLDERS.find(x=>x.id===curFolder);
+  if(!list.length){ el.innerHTML = `<div class="empty">Nothing in ${f.label.replace(/^\S+\s/,'')} yet. Add the first document!</div>`; return; }
+  el.innerHTML = list.map(d=>`
+    <div class="doc">
+      <div class="ic">${f.ic}</div>
+      <div>
+        <h3>${d.url ? `<a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.title)} ↗</a>` : esc(d.title)}</h3>
+        ${d.desc ? `<p>${esc(d.desc)}</p>` : ''}
+        <div class="meta">Added by ${esc(d.addedBy)} · ${ago(d.ts)}</div>
+      </div>
+    </div>`).join('');
+}
+async function addDoc(){
+  if(needName()) return;
+  const folder = document.getElementById('doc-folder').value;
+  const title = document.getElementById('doc-title').value.trim();
+  let url = document.getElementById('doc-url').value.trim();
+  const desc = document.getElementById('doc-desc').value.trim();
+  if(!title){ alert('Give it a title so people know what it is.'); return; }
+  if(url && !/^https?:\/\//i.test(url)) url = 'https://' + url;
+  const fresh = await sGet('docs', true, []);
+  fresh.push({id:Date.now().toString(36), folder, title, url, desc, addedBy:me, ts:Date.now()});
+  if(await sSet('docs', fresh, true)){
+    docsCache = fresh; curFolder = folder;
+    document.getElementById('doc-title').value=''; document.getElementById('doc-url').value=''; document.getElementById('doc-desc').value='';
+    closeModal('doc-modal'); buildFolderTabs(); renderDocs(); renderActivity();
+  }
+}
+
+/* ================= team ================= */
+function initials(n){ return n.split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
+function renderTeam(){
+  const el = document.getElementById('team-list');
+  if(!teamCache.length){ el.innerHTML = '<div class="empty">Nobody\'s signed the roster yet — be first!</div>'; return; }
+  el.innerHTML = teamCache.map(m=>`
+    <div class="member">
+      <div class="avatar">${initials(m.name)}</div>
+      <div class="info">
+        <b>${esc(m.name)}</b>
+        <div class="role">${esc(m.role||'')}</div>
+      </div>
+      ${m.contact?`<div class="contact">${esc(m.contact)}</div>`:''}
+    </div>`).join('');
+}
+async function addMember(){
+  const name = document.getElementById('tm-name').value.trim();
+  const role = document.getElementById('tm-role').value.trim();
+  const contact = document.getElementById('tm-contact').value.trim();
+  if(!name){ alert('Name, please!'); return; }
+  const fresh = await sGet('team', true, []);
+  fresh.push({id:Date.now().toString(36), name, role, contact});
+  if(await sSet('team', fresh, true)){
+    teamCache = fresh;
+    closeModal('team-modal'); renderTeam();
+  }
+}
+
+/* ================= activity ================= */
+function renderActivity(){
+  const items = [];
+  CHANNELS.forEach(c=>(threadsCache[c.id]||[]).forEach(t=>{
+    items.push({ts:t.ts, html:`💬 <b>${esc(t.author)}</b> started “${esc(t.title)}”`});
+    (t.replies||[]).forEach(r=>items.push({ts:r.ts, html:`↩️ <b>${esc(r.author)}</b> replied in “${esc(t.title)}”`}));
+  }));
+  docsCache.forEach(d=>items.push({ts:d.ts, html:`📁 <b>${esc(d.addedBy)}</b> added “${esc(d.title)}”`}));
+  items.sort((a,b)=>b.ts-a.ts);
+  const el = document.getElementById('activity');
+  if(!items.length){ el.innerHTML = '<li class="empty">Quiet so far. Start a thread or add a document to get things moving.</li>'; return; }
+  el.innerHTML = items.slice(0,5).map(i=>`<li><span>${i.html}</span><span class="when">${ago(i.ts)}</span></li>`).join('');
+}
+</script>
