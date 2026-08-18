@@ -1,33 +1,41 @@
 <!-- NUTS! Project VDR — single-file app -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Saira:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
 <style>
   :root{
-    --paper:#FDF8EF;
-    --card:#FFFFFF;
-    --ink:#3E2A1A;
-    --ink-soft:#7A6350;
-    --acorn:#E9A63C;
-    --acorn-deep:#C77F17;
-    --leaf:#7BA05B;
-    --leaf-deep:#5C7F41;
-    --shell:#EADFCE;
-    --rust:#B65C2E;
+    --paper:#E9E5D2;
+    --card:#F6F3E6;
+    --ink:#232819;
+    --ink-soft:#5D6247;
+    --acorn:#6B7A2E;
+    --acorn-deep:#4B5320;
+    --leaf:#5F7045;
+    --leaf-deep:#3B491F;
+    --shell:#CFC9A8;
+    --rust:#A3402F;
     --radius:18px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--paper);color:var(--ink);font-family:'Nunito',sans-serif;font-size:16px;line-height:1.55;min-height:100vh}
-  h1,h2,h3,.display{font-family:'Baloo 2',cursive}
-  button{font-family:'Nunito',sans-serif;cursor:pointer}
-  input,textarea,select{font-family:'Nunito',sans-serif;font-size:15px;color:var(--ink)}
+  body{
+    background-color:var(--paper);
+    background-image:
+      radial-gradient(ellipse 340px 200px at 12% 18%, rgba(75,83,32,.10) 0 62%, transparent 63%),
+      radial-gradient(ellipse 420px 240px at 85% 30%, rgba(93,98,71,.10) 0 60%, transparent 61%),
+      radial-gradient(ellipse 380px 220px at 30% 78%, rgba(59,73,31,.09) 0 61%, transparent 62%),
+      radial-gradient(ellipse 300px 190px at 75% 88%, rgba(107,122,46,.10) 0 60%, transparent 61%);
+    background-attachment:fixed;
+    color:var(--ink);font-family:'Saira',sans-serif;font-size:16px;line-height:1.55;min-height:100vh}
+  h1,h2,h3,.display{font-family:'Black Ops One',system-ui}
+  button{font-family:'Saira',sans-serif;cursor:pointer}
+  input,textarea,select{font-family:'Saira',sans-serif;font-size:15px;color:var(--ink)}
   a{color:var(--leaf-deep)}
   .wrap{max-width:880px;margin:0 auto;padding:0 16px 90px}
 
   /* ---------- gate ---------- */
   #gate{position:fixed;inset:0;background:var(--paper);display:flex;align-items:center;justify-content:center;z-index:100;padding:20px}
   .gate-card{background:var(--card);border:3px solid var(--shell);border-radius:24px;padding:40px 32px;max-width:380px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(62,42,26,.10)}
-  .wordmark{font-family:'Baloo 2',cursive;font-weight:800;font-size:52px;letter-spacing:1px;color:var(--ink);display:inline-block;transform:rotate(-3deg);line-height:1}
-  .wordmark .bang{color:var(--acorn);display:inline-block;transform:rotate(8deg)}
+  .wordmark{font-family:'Black Ops One',system-ui;font-weight:400;font-size:50px;letter-spacing:4px;color:var(--ink);display:inline-block;line-height:1;text-transform:uppercase}
+  .wordmark .bang{color:var(--acorn-deep)}
   .gate-card p{color:var(--ink-soft);margin:10px 0 22px}
   .gate-card input{width:100%;padding:13px 16px;border:2px solid var(--shell);border-radius:14px;font-size:17px;text-align:center;letter-spacing:2px;outline:none}
   .gate-card input:focus{border-color:var(--acorn)}
@@ -63,19 +71,19 @@
   .row{display:flex;gap:18px;flex-wrap:wrap}
   .row>.card{flex:1 1 260px;margin-bottom:0}
   .pill{display:inline-block;background:var(--shell);border-radius:999px;padding:3px 12px;font-size:12.5px;font-weight:800;color:var(--ink-soft)}
-  .pill.green{background:#E4EDD9;color:var(--leaf-deep)}
-  .pill.gold{background:#FBEBCB;color:var(--acorn-deep)}
+  .pill.green{background:#D9DEC2;color:var(--leaf-deep)}
+  .pill.gold{background:#DFDCB8;color:var(--acorn-deep)}
 
   /* ---------- acorn meter ---------- */
   .goal-flex{display:flex;gap:26px;align-items:center;flex-wrap:wrap}
   .goal-nums{flex:1;min-width:200px}
-  .goal-nums .big{font-family:'Baloo 2',cursive;font-weight:800;font-size:44px;color:var(--leaf-deep);line-height:1}
+  .goal-nums .big{font-family:'Black Ops One',system-ui;font-weight:800;font-size:44px;color:var(--leaf-deep);line-height:1}
   .goal-nums .of{font-size:17px;color:var(--ink-soft);font-weight:700}
 
   /* ---------- countdown ---------- */
   .count{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px}
   .count div{background:var(--paper);border:2px solid var(--shell);border-radius:14px;padding:10px 14px;text-align:center;min-width:70px}
-  .count b{font-family:'Baloo 2',cursive;font-size:28px;display:block;line-height:1.1}
+  .count b{font-family:'Black Ops One',system-ui;font-size:28px;display:block;line-height:1.1}
   .count span{font-size:12px;color:var(--ink-soft);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
 
   /* ---------- activity ---------- */
@@ -87,10 +95,10 @@
   /* ---------- discussions ---------- */
   .chan-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
   .chan-tabs button{border:2px solid var(--shell);background:var(--card);border-radius:12px;padding:7px 14px;font-weight:800;font-size:14px;color:var(--ink-soft)}
-  .chan-tabs button.on{border-color:var(--leaf);background:#F0F5E9;color:var(--leaf-deep)}
+  .chan-tabs button.on{border-color:var(--leaf);background:#E2E5CC;color:var(--leaf-deep)}
   .thread{background:var(--card);border:2px solid var(--shell);border-radius:var(--radius);margin-bottom:14px;overflow:hidden}
   .thread-head{padding:16px 18px;cursor:pointer;display:flex;gap:10px;align-items:baseline}
-  .thread-head:hover{background:#FCF5E8}
+  .thread-head:hover{background:#EFEBD6}
   .thread-head h3{flex:1}
   .thread-body{padding:0 18px 16px;display:none}
   .thread.open .thread-body{display:block}
@@ -103,7 +111,7 @@
   /* ---------- documents ---------- */
   .folder-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
   .folder-tabs button{border:2px solid var(--shell);background:var(--card);border-radius:12px;padding:7px 14px;font-weight:800;font-size:14px;color:var(--ink-soft)}
-  .folder-tabs button.on{border-color:var(--acorn);background:#FBEBCB;color:var(--acorn-deep)}
+  .folder-tabs button.on{border-color:var(--acorn);background:#DFDCB8;color:var(--acorn-deep)}
   .doc{display:flex;gap:12px;align-items:flex-start;padding:14px 0;border-bottom:1.5px dashed var(--shell)}
   .doc:last-child{border:none}
   .doc .ic{font-size:22px;line-height:1.3}
@@ -115,7 +123,7 @@
   /* ---------- team ---------- */
   .member{display:flex;gap:14px;align-items:center;padding:12px 0;border-bottom:1.5px dashed var(--shell)}
   .member:last-child{border:none}
-  .avatar{width:44px;height:44px;border-radius:50%;background:var(--acorn);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Baloo 2',cursive;font-weight:800;font-size:19px;flex:none}
+  .avatar{width:44px;height:44px;border-radius:50%;background:var(--acorn);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Black Ops One',system-ui;font-weight:800;font-size:19px;flex:none}
   .member .info{flex:1}
   .member .role{font-size:13.5px;color:var(--ink-soft);font-weight:700}
   .member .contact{font-size:13.5px;color:var(--leaf-deep)}
@@ -143,10 +151,10 @@
 <div id="gate">
   <div class="gate-card">
     <div class="wordmark">NUTS<span class="bang">!</span></div>
-    <p>Project workspace · invitation only</p>
+    <p>Project workspace · authorized personnel only</p>
     <input id="gate-input" type="password" placeholder="Access code" autocomplete="off">
     <div class="gate-err" id="gate-err"></div>
-    <button class="btn" onclick="tryUnlock()">Crack it open</button>
+    <button class="btn" onclick="tryUnlock()">Authenticate</button>
   </div>
 </div>
 
@@ -177,11 +185,11 @@
                 <path d="M60 42 C30 42 18 62 18 88 C18 118 40 142 60 142 C80 142 102 118 102 88 C102 62 90 42 60 42 Z"/>
               </clipPath>
             </defs>
-            <path d="M60 42 C30 42 18 62 18 88 C18 118 40 142 60 142 C80 142 102 118 102 88 C102 62 90 42 60 42 Z" fill="#F3E9D7" stroke="#C77F17" stroke-width="3"/>
-            <rect id="acorn-fill" x="18" y="142" width="84" height="0" fill="#7BA05B" clip-path="url(#acorn-clip)"/>
-            <path d="M60 42 C30 42 18 62 18 88 C18 118 40 142 60 142 C80 142 102 118 102 88 C102 62 90 42 60 42 Z" fill="none" stroke="#C77F17" stroke-width="3"/>
-            <path d="M26 44 C26 26 42 14 60 14 C78 14 94 26 94 44 C94 50 90 54 60 54 C30 54 26 50 26 44 Z" fill="#E9A63C" stroke="#C77F17" stroke-width="3"/>
-            <path d="M60 14 C60 8 64 4 70 4" fill="none" stroke="#5C7F41" stroke-width="5" stroke-linecap="round"/>
+            <path d="M60 42 C30 42 18 62 18 88 C18 118 40 142 60 142 C80 142 102 118 102 88 C102 62 90 42 60 42 Z" fill="#DDD6B6" stroke="#4B5320" stroke-width="3"/>
+            <rect id="acorn-fill" x="18" y="142" width="84" height="0" fill="#5F7045" clip-path="url(#acorn-clip)"/>
+            <path d="M60 42 C30 42 18 62 18 88 C18 118 40 142 60 142 C80 142 102 118 102 88 C102 62 90 42 60 42 Z" fill="none" stroke="#4B5320" stroke-width="3"/>
+            <path d="M26 44 C26 26 42 14 60 14 C78 14 94 26 94 44 C94 50 90 54 60 54 C30 54 26 50 26 44 Z" fill="#6B7A2E" stroke="#4B5320" stroke-width="3"/>
+            <path d="M60 14 C60 8 64 4 70 4" fill="none" stroke="#3B491F" stroke-width="5" stroke-linecap="round"/>
           </svg>
           <div class="goal-nums">
             <span class="pill gold">Fundraising goal</span>
@@ -267,7 +275,7 @@
 <!-- ================= MODALS ================= -->
 <div class="modal-bg" id="name-modal">
   <div class="modal">
-    <h2>Who's there? 🐿️</h2>
+    <h2>Who goes there? 🎖️</h2>
     <p class="muted">Your name is shown on your posts so the team knows who said what.</p>
     <label for="name-input">Your name</label>
     <input id="name-input" placeholder="e.g. Sam R.">
@@ -350,7 +358,7 @@
 
 <script>
 /* ================= config ================= */
-const CODE = 'NUTS!';
+const CODE = 'ROCHAMBEAU';
 const GOAL = 500;
 const LAUNCH = new Date('2026-11-26T00:00:00');
 const CHANNELS = [
@@ -391,9 +399,9 @@ function unlock(){
 }
 function tryUnlock(){
   const v = normalize(document.getElementById('gate-input').value);
-  if(v === 'NUTS!' || v === 'NUTS'){ unlock(); }
+  if(v === 'ROCHAMBEAU'){ unlock(); }
   else{
-    document.getElementById('gate-err').textContent = 'Not quite — ask a team member for the code.';
+    document.getElementById('gate-err').textContent = 'Access denied — ask a team member for the code.';
     document.getElementById('gate-input').value = '';
   }
 }
@@ -402,7 +410,7 @@ document.getElementById('gate-input').addEventListener('keydown', e=>{ if(e.key=
 (function autoUnlock(){
   try{
     const p = new URLSearchParams(location.search).get('code');
-    if(p && (normalize(decodeURIComponent(p))==='NUTS!' || normalize(decodeURIComponent(p))==='NUTS')) unlock();
+    if(p && normalize(decodeURIComponent(p))==='ROCHAMBEAU') unlock();
   }catch(e){}
 })();
 
