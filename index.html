@@ -356,7 +356,22 @@
   </div>
 </div>
 
-<script>
+<script type="module">
+/* ================= Firebase ================= */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCCQgdVHIC6IwzOhF-icUqjSMrxSNEtxqc",
+  authDomain: "vdr-nuts.firebaseapp.com",
+  projectId: "vdr-nuts",
+  storageBucket: "vdr-nuts.firebasestorage.app",
+  messagingSenderId: "154009920042",
+  appId: "1:154009920042:web:9126e039dec55c1cd89953"
+};
+const fbApp = initializeApp(firebaseConfig);
+const db = getFirestore(fbApp);
+
 /* ================= config ================= */
 const CODE = 'ROCHAMBEAU';
 const GOAL = 500;
@@ -380,14 +395,24 @@ let curChan = 'general';
 let curFolder = 'design';
 let threadsCache = {}, docsCache = [], teamCache = [], settingsCache = {raised:0};
 
-/* ================= storage helpers ================= */
+/* ================= storage helpers (Firestore) ================= */
 async function sGet(key, shared, fallback){
-  try{ const r = await window.storage.get(key, shared); return r ? JSON.parse(r.value) : fallback; }
-  catch(e){ return fallback; }
+  if(!shared){ /* personal: browser-local */
+    try{ const v = localStorage.getItem('nutsvdr-'+key); return v!==null ? JSON.parse(v) : fallback; }
+    catch(e){ return fallback; }
+  }
+  try{
+    const snap = await getDoc(doc(db, 'vdr', key));
+    return snap.exists() ? JSON.parse(snap.data().value) : fallback;
+  }catch(e){ console.error('load failed', key, e); return fallback; }
 }
 async function sSet(key, val, shared){
-  try{ await window.storage.set(key, JSON.stringify(val), shared); return true; }
-  catch(e){ alert('Hmm — that didn\'t save. Check your connection and try again.'); return false; }
+  if(!shared){
+    try{ localStorage.setItem('nutsvdr-'+key, JSON.stringify(val)); return true; }
+    catch(e){ return true; } /* private-browsing fallback: keep going in memory */
+  }
+  try{ await setDoc(doc(db, 'vdr', key), { value: JSON.stringify(val), ts: Date.now() }); return true; }
+  catch(e){ console.error('save failed', key, e); alert('Hmm — that didn\'t save. Check your connection and try again.'); return false; }
 }
 
 /* ================= gate ================= */
@@ -632,6 +657,8 @@ function renderActivity(){
   items.sort((a,b)=>b.ts-a.ts);
   const el = document.getElementById('activity');
   if(!items.length){ el.innerHTML = '<li class="empty">Quiet so far. Start a thread or add a document to get things moving.</li>'; return; }
-  el.innerHTML = items.slice(0,5).map(i=>`<li><span>${i.html}</span><span class="when">${ago(i.ts)}</span></li>`).join('');
-}
+/* ================= expose handlers for inline onclick ================= */
+Object.assign(window, { tryUnlock, showTab, openModal, closeModal, saveName, editRaised,
+  pickChan, openThreadModal, createThread, toggleThread, reply,
+  pickFolder, addDoc, addMember });
 </script>
