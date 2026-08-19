@@ -657,6 +657,9 @@ function renderActivity(){
   items.sort((a,b)=>b.ts-a.ts);
   const el = document.getElementById('activity');
   if(!items.length){ el.innerHTML = '<li class="empty">Quiet so far. Start a thread or add a document to get things moving.</li>'; return; }
+  el.innerHTML = items.slice(0,5).map(i=>`<li><span>${i.html}</span><span class="when">${ago(i.ts)}</span></li>`).join('');
+}
+
 /* ================= expose handlers for inline onclick ================= */
 Object.assign(window, { tryUnlock, showTab, openModal, closeModal, saveName, editRaised,
   pickChan, openThreadModal, createThread, toggleThread, reply,
