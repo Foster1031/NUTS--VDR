@@ -119,6 +119,22 @@
   .doc h3 a:hover{color:var(--acorn-deep);text-decoration:underline}
   .doc p{font-size:14.5px;color:var(--ink-soft)}
   .doc .meta{font-size:12.5px;color:var(--ink-soft);margin-top:2px}
+  .doc .doc-actions{display:flex;gap:8px;align-items:center;margin-left:auto;flex:none}
+  .doc .del-btn{background:transparent;border:2px solid var(--shell);color:var(--ink-soft);border-radius:10px;padding:4px 10px;font-size:12px;font-weight:800}
+  .doc .del-btn:hover{border-color:var(--rust);color:var(--rust)}
+  .filesize-pill{display:inline-block;background:var(--shell);border-radius:8px;padding:1px 8px;font-size:11.5px;font-weight:800;color:var(--ink-soft);margin-left:6px}
+
+  /* ---------- upload ---------- */
+  .upload-divider{display:flex;align-items:center;gap:10px;margin:14px 0;color:var(--ink-soft);font-size:12.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em}
+  .upload-divider::before,.upload-divider::after{content:"";flex:1;height:1.5px;background:var(--shell)}
+  .file-drop{border:2px dashed var(--shell);border-radius:14px;padding:16px;text-align:center;cursor:pointer;font-size:14px;color:var(--ink-soft);font-weight:700}
+  .file-drop:hover{border-color:var(--acorn);background:#EFEBD6}
+  .file-drop.has-file{border-color:var(--leaf);background:#E2E5CC;color:var(--leaf-deep)}
+  .progress-wrap{margin-top:10px;display:none}
+  .progress-wrap.on{display:block}
+  .progress-bar{height:10px;border-radius:999px;background:var(--shell);overflow:hidden}
+  .progress-bar > div{height:100%;background:var(--leaf);width:0%;transition:width .15s}
+  .progress-label{font-size:12.5px;color:var(--ink-soft);font-weight:700;margin-top:4px}
 
   /* ---------- team ---------- */
   .member{display:flex;gap:14px;align-items:center;padding:12px 0;border-bottom:1.5px dashed var(--shell)}
@@ -306,13 +322,24 @@
     <select id="doc-folder"></select>
     <label for="doc-title">Title</label>
     <input id="doc-title" placeholder="e.g. Game rules draft v2">
+
+    <label for="doc-file" style="margin-top:16px">Upload a file</label>
+    <div class="file-drop" id="file-drop" onclick="document.getElementById('doc-file').click()">Click to choose a file (max 20MB)</div>
+    <input id="doc-file" type="file" style="display:none" onchange="onFilePicked()">
+    <div class="progress-wrap" id="progress-wrap">
+      <div class="progress-bar"><div id="progress-fill"></div></div>
+      <div class="progress-label" id="progress-label">Uploading…</div>
+    </div>
+
+    <div class="upload-divider">or</div>
+
     <label for="doc-url">Link (Google Drive, Dropbox, etc.)</label>
-    <input id="doc-url" placeholder="https://…  (optional if you paste notes below)">
+    <input id="doc-url" placeholder="https://…  (use this for very large files)">
     <label for="doc-desc">Description / notes</label>
     <textarea id="doc-desc" rows="3" placeholder="What is it? Anything to know?"></textarea>
     <div class="actions">
-      <button class="btn ghost" onclick="closeModal('doc-modal')">Cancel</button>
-      <button class="btn green" onclick="addDoc()">Add document</button>
+      <button class="btn ghost" onclick="resetDocForm(); closeModal('doc-modal')">Cancel</button>
+      <button class="btn green" id="doc-submit-btn" onclick="addDoc()">Add document</button>
     </div>
   </div>
 </div>
@@ -335,8 +362,9 @@
 
 <div class="modal-bg" id="howto-modal">
   <div class="modal howto">
-    <h2>Linking a file from Drive or Dropbox</h2>
-    <p class="muted">Files live in your cloud storage; this site holds the link. Two minutes, tops.</p>
+    <h2>Adding documents</h2>
+    <p class="muted"><b>Easiest:</b> in "Add document," click the upload box and pick a file — it's stored right here on the site and everyone can download it directly. Good for files under 20MB.</p>
+    <p class="muted" style="margin-top:8px">For bigger files (long videos, huge archives), link out to Google Drive or Dropbox instead. Two minutes, tops.</p>
     <h3>📗 Google Drive</h3>
     <ol>
       <li>Upload your file to Drive (drag it into <a href="https://drive.google.com" target="_blank" rel="noopener">drive.google.com</a>).</li>
@@ -360,6 +388,7 @@
 /* ================= Firebase ================= */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCCQgdVHIC6IwzOhF-icUqjSMrxSNEtxqc",
@@ -371,6 +400,8 @@ const firebaseConfig = {
 };
 const fbApp = initializeApp(firebaseConfig);
 const db = getFirestore(fbApp);
+const storage = getStorage(fbApp);
+const MAX_FILE_BYTES = 20 * 1024 * 1024; // 20MB
 
 /* ================= config ================= */
 const CODE = 'ROCHAMBEAU';
@@ -394,6 +425,23 @@ let me = '';
 let curChan = 'general';
 let curFolder = 'design';
 let threadsCache = {}, docsCache = [], teamCache = [], settingsCache = {raised:0};
+let pickedFile = null;
+
+function fmtBytes(n){
+  if(n < 1024) return n + ' B';
+  if(n < 1024*1024) return Math.round(n/1024) + ' KB';
+  return (n/(1024*1024)).toFixed(1) + ' MB';
+}
+function iconFor(name, contentType){
+  const ext = (name.split('.').pop()||'').toLowerCase();
+  if(/^image\//.test(contentType||'') || ['jpg','jpeg','png','gif','webp','svg'].includes(ext)) return '🖼️';
+  if(ext==='pdf') return '📕';
+  if(['doc','docx'].includes(ext)) return '📘';
+  if(['xls','xlsx','csv'].includes(ext)) return '📊';
+  if(['ppt','pptx'].includes(ext)) return '📙';
+  if(['zip','rar','7z'].includes(ext)) return '🗜️';
+  return '📄';
+}
 
 /* ================= storage helpers (Firestore) ================= */
 async function sGet(key, shared, fallback){
@@ -591,15 +639,48 @@ function renderDocs(){
   const el = document.getElementById('doc-list');
   const f = FOLDERS.find(x=>x.id===curFolder);
   if(!list.length){ el.innerHTML = `<div class="empty">Nothing in ${f.label.replace(/^\S+\s/,'')} yet. Add the first document!</div>`; return; }
-  el.innerHTML = list.map(d=>`
+  el.innerHTML = list.map(d=>{
+    const isFile = !!d.fileURL;
+    const icon = isFile ? iconFor(d.fileName||d.title, d.contentType) : f.ic;
+    const primaryLink = isFile ? d.fileURL : d.url;
+    const linkLabel = isFile ? `${esc(d.title)} ⬇` : `${esc(d.title)} ↗`;
+    return `
     <div class="doc">
-      <div class="ic">${f.ic}</div>
+      <div class="ic">${icon}</div>
       <div>
-        <h3>${d.url ? `<a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.title)} ↗</a>` : esc(d.title)}</h3>
+        <h3>${primaryLink ? `<a href="${esc(primaryLink)}" target="_blank" rel="noopener">${linkLabel}</a>` : esc(d.title)}</h3>
         ${d.desc ? `<p>${esc(d.desc)}</p>` : ''}
-        <div class="meta">Added by ${esc(d.addedBy)} · ${ago(d.ts)}</div>
+        <div class="meta">Added by ${esc(d.addedBy)} · ${ago(d.ts)}${isFile ? `<span class="filesize-pill">${fmtBytes(d.fileSize||0)}</span>` : ''}${(isFile && d.url) ? ` · <a href="${esc(d.url)}" target="_blank" rel="noopener">also linked ↗</a>` : ''}</div>
       </div>
-    </div>`).join('');
+      <div class="doc-actions"><button class="del-btn" onclick="deleteDoc('${d.id}')">Remove</button></div>
+    </div>`;
+  }).join('');
+}
+function onFilePicked(){
+  const input = document.getElementById('doc-file');
+  const f = input.files && input.files[0];
+  const drop = document.getElementById('file-drop');
+  if(!f){ pickedFile = null; drop.textContent = 'Click to choose a file (max 20MB)'; drop.classList.remove('has-file'); return; }
+  if(f.size > MAX_FILE_BYTES){
+    alert('That file is over 20MB. Use the Drive/Dropbox link option below instead.');
+    input.value = ''; pickedFile = null;
+    drop.textContent = 'Click to choose a file (max 20MB)'; drop.classList.remove('has-file');
+    return;
+  }
+  pickedFile = f;
+  drop.textContent = `${iconFor(f.name, f.type)} ${f.name} (${fmtBytes(f.size)})`;
+  drop.classList.add('has-file');
+}
+function resetDocForm(){
+  pickedFile = null;
+  document.getElementById('doc-title').value='';
+  document.getElementById('doc-url').value='';
+  document.getElementById('doc-desc').value='';
+  document.getElementById('doc-file').value='';
+  document.getElementById('file-drop').textContent = 'Click to choose a file (max 20MB)';
+  document.getElementById('file-drop').classList.remove('has-file');
+  document.getElementById('progress-wrap').classList.remove('on');
+  document.getElementById('progress-fill').style.width = '0%';
 }
 async function addDoc(){
   if(needName()) return;
@@ -608,13 +689,64 @@ async function addDoc(){
   let url = document.getElementById('doc-url').value.trim();
   const desc = document.getElementById('doc-desc').value.trim();
   if(!title){ alert('Give it a title so people know what it is.'); return; }
+  if(!pickedFile && !url){ alert('Upload a file or paste a link.'); return; }
   if(url && !/^https?:\/\//i.test(url)) url = 'https://' + url;
+
+  const btn = document.getElementById('doc-submit-btn');
+  btn.disabled = true;
+
+  let docRecord = {id:Date.now().toString(36), folder, title, desc, addedBy:me, ts:Date.now()};
+
+  if(pickedFile){
+    const path = `docs/${folder}/${docRecord.id}-${pickedFile.name}`;
+    const sref = storageRef(storage, path);
+    const task = uploadBytesResumable(sref, pickedFile, {contentType: pickedFile.type || 'application/octet-stream'});
+    const wrap = document.getElementById('progress-wrap'), fill = document.getElementById('progress-fill'), label = document.getElementById('progress-label');
+    wrap.classList.add('on');
+    try{
+      await new Promise((resolve, reject)=>{
+        task.on('state_changed', snap=>{
+          const pct = Math.round(100 * snap.bytesTransferred / snap.totalBytes);
+          fill.style.width = pct + '%';
+          label.textContent = `Uploading… ${pct}%`;
+        }, reject, resolve);
+      });
+      docRecord.fileURL = await getDownloadURL(task.snapshot.ref);
+      docRecord.storagePath = path;
+      docRecord.fileName = pickedFile.name;
+      docRecord.fileSize = pickedFile.size;
+      docRecord.contentType = pickedFile.type || '';
+      docRecord.url = url || null;
+    }catch(e){
+      console.error('upload failed', e);
+      alert("That upload didn't go through — check your connection and try again.");
+      btn.disabled = false; wrap.classList.remove('on');
+      return;
+    }
+  } else {
+    docRecord.url = url;
+  }
+
   const fresh = await sGet('docs', true, []);
-  fresh.push({id:Date.now().toString(36), folder, title, url, desc, addedBy:me, ts:Date.now()});
+  fresh.push(docRecord);
   if(await sSet('docs', fresh, true)){
     docsCache = fresh; curFolder = folder;
-    document.getElementById('doc-title').value=''; document.getElementById('doc-url').value=''; document.getElementById('doc-desc').value='';
+    resetDocForm();
     closeModal('doc-modal'); buildFolderTabs(); renderDocs(); renderActivity();
+  }
+  btn.disabled = false;
+}
+async function deleteDoc(id){
+  const d = docsCache.find(x=>x.id===id);
+  if(!d) return;
+  if(!confirm(`Remove "${d.title}"? This can't be undone.`)) return;
+  if(d.storagePath){
+    try{ await deleteObject(storageRef(storage, d.storagePath)); }
+    catch(e){ console.error('storage delete failed', e); /* continue removing the record either way */ }
+  }
+  const fresh = (await sGet('docs', true, [])).filter(x=>x.id!==id);
+  if(await sSet('docs', fresh, true)){
+    docsCache = fresh; renderDocs(); renderActivity();
   }
 }
 
@@ -663,5 +795,5 @@ function renderActivity(){
 /* ================= expose handlers for inline onclick ================= */
 Object.assign(window, { tryUnlock, showTab, openModal, closeModal, saveName, editRaised,
   pickChan, openThreadModal, createThread, toggleThread, reply,
-  pickFolder, addDoc, addMember });
+  pickFolder, addDoc, addMember, onFilePicked, deleteDoc, resetDocForm });
 </script>
