@@ -157,6 +157,19 @@
   .howto li{margin-bottom:6px}
   .howto h3{margin-top:14px}
 
+  /* ---------- poll ---------- */
+  .poll-option{margin-bottom:14px}
+  .poll-label{display:flex;justify-content:space-between;font-weight:800;font-size:14.5px;margin-bottom:5px}
+  .poll-bar-track{background:var(--shell);border-radius:999px;height:22px;overflow:hidden}
+  .poll-bar-fill{background:var(--leaf);height:100%;border-radius:999px;transition:width .3s ease}
+  .poll-radio-row{display:flex;gap:10px;align-items:center;padding:11px 4px;border-bottom:1.5px dashed var(--shell);cursor:pointer;font-weight:700}
+  .poll-radio-row:last-of-type{border-bottom:none}
+  .poll-radio-row input{width:18px;height:18px;accent-color:var(--acorn)}
+  .poll-other-input{margin:6px 0 0 28px;width:calc(100% - 28px)}
+  .poll-voted-note{background:var(--paper);border:2px solid var(--leaf);border-radius:14px;padding:16px 18px;margin-top:16px}
+  .poll-voted-note b{color:var(--leaf-deep)}
+  details.poll-other-list summary{cursor:pointer;font-weight:800;color:var(--ink-soft);font-size:13px}
+  details.poll-other-list ul{margin:8px 0 0 18px;font-size:14px}
   .footer-note{text-align:center;font-size:12.5px;color:var(--ink-soft);margin-top:30px}
   .loading{text-align:center;padding:30px;color:var(--ink-soft);font-weight:700}
   .empty{padding:18px 0;color:var(--ink-soft);font-style:italic}
@@ -185,6 +198,7 @@
     <button data-tab="dash" class="on" onclick="showTab('dash')">🏠 Dashboard</button>
     <button data-tab="disc" onclick="showTab('disc')">💬 Discussions</button>
     <button data-tab="docs" onclick="showTab('docs')">📁 Documents</button>
+    <button data-tab="poll" onclick="showTab('poll')">🗳️ Poll</button>
     <button data-tab="team" onclick="showTab('team')">🐿️ Team</button>
     <button data-tab="about" onclick="showTab('about')">🌰 About</button>
   </nav>
@@ -256,6 +270,15 @@
       </div>
       <div class="folder-tabs" id="folder-tabs"></div>
       <div class="card" id="doc-list"><div class="loading">Loading…</div></div>
+    </section>
+
+    <!-- ---------- POLL ---------- -->
+    <section id="tab-poll">
+      <div class="card">
+        <h2>Where should the money go?</h2>
+        <p class="muted">Vote for the charity partner you'd like to see NUTS! support. One vote per person.</p>
+        <div id="poll-body"><div class="loading">Loading…</div></div>
+      </div>
     </section>
 
     <!-- ---------- TEAM ---------- -->
@@ -420,11 +443,19 @@ const FOLDERS = [
   {id:'financials', label:'💵 Financials', ic:'💵'},
   {id:'misc', label:'📦 Misc', ic:'📦'}
 ];
+const POLL_CHOICES = [
+  {id:'fisher', label:'Fisher House Foundation'},
+  {id:'wwp',    label:'Wounded Warrior Project'},
+  {id:'sowf',   label:'Special Operations Warrior Foundation'},
+  {id:'mcsf',   label:'Marine Corps Scholarship Fund'},
+  {id:'other',  label:'Other (please specify)'}
+];
 
 let me = '';
 let curChan = 'general';
 let curFolder = 'design';
 let threadsCache = {}, docsCache = [], teamCache = [], settingsCache = {raised:0};
+let pollCache = {};
 let pickedFile = null;
 
 function fmtBytes(n){
@@ -502,7 +533,8 @@ async function refreshAll(){
   await Promise.all(loads);
   docsCache = await sGet('docs', true, []);
   teamCache = await sGet('team', true, []);
-  renderThreads(); renderDocs(); renderTeam(); renderActivity();
+  pollCache = await sGet('poll-votes', true, {});
+  renderThreads(); renderDocs(); renderTeam(); renderPoll(); renderActivity();
 }
 
 /* ================= identity ================= */
@@ -778,6 +810,80 @@ async function addMember(){
   }
 }
 
+/* ================= poll ================= */
+function normKey(n){ return (n||'').trim().toLowerCase(); }
+function renderPoll(){
+  const el = document.getElementById('poll-body');
+  if(!el) return;
+  const votes = Object.values(pollCache);
+  const total = votes.length;
+  const counts = {}; POLL_CHOICES.forEach(c=>counts[c.id]=0);
+  const otherTexts = [];
+  votes.forEach(v=>{
+    if(counts[v.choice]!==undefined) counts[v.choice]++;
+    if(v.choice==='other' && v.otherText) otherTexts.push(v.otherText);
+  });
+  const existing = me ? pollCache[normKey(me)] : null;
+
+  const resultsHtml = `
+    <div class="muted" style="margin-bottom:12px;font-weight:800">${total} vote${total===1?'':'s'} cast so far</div>
+    ${POLL_CHOICES.map(c=>{
+      const n = counts[c.id]||0;
+      const pct = total ? Math.round(100*n/total) : 0;
+      return `<div class="poll-option">
+        <div class="poll-label"><span>${esc(c.label)}</span><span>${n} (${pct}%)</span></div>
+        <div class="poll-bar-track"><div class="poll-bar-fill" style="width:${pct}%"></div></div>
+      </div>`;
+    }).join('')}
+    ${otherTexts.length ? `<details class="poll-other-list"><summary>See "Other" suggestions (${otherTexts.length})</summary><ul>${otherTexts.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></details>` : ''}`;
+
+  let formHtml;
+  if(existing){
+    const label = (POLL_CHOICES.find(c=>c.id===existing.choice)||{}).label || existing.choice;
+    formHtml = `<div class="poll-voted-note"><b>✅ You voted for ${esc(label)}</b>${existing.choice==='other' && existing.otherText ? `: “${esc(existing.otherText)}”` : ''}. Thanks for weighing in — one vote per person, so this is locked in.</div>`;
+  } else {
+    formHtml = `
+      <div class="poll-voted-note" style="border-color:var(--shell)">
+        <h3 style="margin-bottom:6px">Cast your vote</h3>
+        ${POLL_CHOICES.map(c=>`
+          <label class="poll-radio-row">
+            <input type="radio" name="poll-choice" value="${c.id}" onchange="onPollChoiceChange()">
+            <span>${esc(c.label)}</span>
+          </label>`).join('')}
+        <input id="poll-other-text" class="poll-other-input" style="display:none" placeholder="Tell us where…">
+        <div class="actions" style="margin-top:14px;justify-content:flex-start">
+          <button class="btn green" onclick="castVote()">Cast your vote</button>
+        </div>
+      </div>`;
+  }
+  el.innerHTML = resultsHtml + formHtml;
+}
+function onPollChoiceChange(){
+  const sel = document.querySelector('input[name="poll-choice"]:checked');
+  const box = document.getElementById('poll-other-text');
+  if(box) box.style.display = (sel && sel.value==='other') ? 'block' : 'none';
+}
+async function castVote(){
+  if(needName()) return;
+  const key = normKey(me);
+  if(pollCache[key]){ alert("Looks like you've already voted."); renderPoll(); return; }
+  const sel = document.querySelector('input[name="poll-choice"]:checked');
+  if(!sel){ alert('Pick an option first.'); return; }
+  const choice = sel.value;
+  let otherText = '';
+  if(choice==='other'){
+    otherText = document.getElementById('poll-other-text').value.trim();
+    if(!otherText){ alert('Let us know what "Other" means to you.'); return; }
+  }
+  const fresh = await sGet('poll-votes', true, {});
+  if(fresh[key]){ pollCache = fresh; alert("Looks like you've already voted."); renderPoll(); return; }
+  fresh[key] = {choice, otherText, name: me, ts: Date.now()};
+  if(await sSet('poll-votes', fresh, true)){
+    pollCache = fresh;
+    renderPoll(); renderActivity();
+  }
+}
+
 /* ================= activity ================= */
 function renderActivity(){
   const items = [];
@@ -786,6 +892,7 @@ function renderActivity(){
     (t.replies||[]).forEach(r=>items.push({ts:r.ts, html:`↩️ <b>${esc(r.author)}</b> replied in “${esc(t.title)}”`}));
   }));
   docsCache.forEach(d=>items.push({ts:d.ts, html:`📁 <b>${esc(d.addedBy)}</b> added “${esc(d.title)}”`}));
+  Object.values(pollCache).forEach(v=>items.push({ts:v.ts, html:`🗳️ <b>${esc(v.name||'Someone')}</b> voted in the charity poll`}));
   items.sort((a,b)=>b.ts-a.ts);
   const el = document.getElementById('activity');
   if(!items.length){ el.innerHTML = '<li class="empty">Quiet so far. Start a thread or add a document to get things moving.</li>'; return; }
@@ -795,5 +902,6 @@ function renderActivity(){
 /* ================= expose handlers for inline onclick ================= */
 Object.assign(window, { tryUnlock, showTab, openModal, closeModal, saveName, editRaised,
   pickChan, openThreadModal, createThread, toggleThread, reply,
-  pickFolder, addDoc, addMember, onFilePicked, deleteDoc, resetDocForm });
+  pickFolder, addDoc, addMember, onFilePicked, deleteDoc, resetDocForm,
+  onPollChoiceChange, castVote });
 </script>
