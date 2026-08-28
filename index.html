@@ -174,16 +174,30 @@
   .loading{text-align:center;padding:30px;color:var(--ink-soft);font-weight:700}
   .empty{padding:18px 0;color:var(--ink-soft);font-style:italic}
   .topbar{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+
+  /* ---------- language toggle ---------- */
+  .lang-toggle{position:fixed;top:14px;right:14px;z-index:110;display:flex;gap:4px;background:var(--card);border:2px solid var(--shell);border-radius:999px;padding:4px;box-shadow:0 4px 14px rgba(62,42,26,.10)}
+  .lang-toggle button{background:transparent;border:none;border-radius:999px;padding:6px 10px;font-size:18px;line-height:1;opacity:.45;transition:opacity .12s,background .12s}
+  .lang-toggle button:hover{opacity:.8}
+  .lang-toggle button.on{opacity:1;background:var(--shell)}
+  .lang-toggle button:focus-visible{outline:3px solid var(--acorn);outline-offset:1px}
+  @media (max-width:480px){ .lang-toggle{top:8px;right:8px} }
 </style>
+
+<!-- ================= LANGUAGE TOGGLE ================= -->
+<div class="lang-toggle" id="lang-toggle" role="group" aria-label="Language / Idioma">
+  <button id="lang-btn-en" class="on" onclick="setLang('en')" title="English" aria-label="English">🇺🇸</button>
+  <button id="lang-btn-pt" onclick="setLang('pt')" title="Português" aria-label="Português">🇧🇷</button>
+</div>
 
 <!-- ================= GATE ================= -->
 <div id="gate">
   <div class="gate-card">
     <div class="wordmark">NUTS<span class="bang">!</span></div>
-    <p>Project workspace · authorized personnel only</p>
-    <input id="gate-input" type="password" placeholder="Access code" autocomplete="off">
+    <p data-i18n="gate.sub">Project workspace · authorized personnel only</p>
+    <input id="gate-input" type="password" data-i18n-ph="gate.ph" placeholder="Access code" autocomplete="off">
     <div class="gate-err" id="gate-err"></div>
-    <button class="btn" onclick="tryUnlock()">Authenticate</button>
+    <button class="btn" onclick="tryUnlock()" data-i18n="gate.btn">Authenticate</button>
   </div>
 </div>
 
@@ -191,16 +205,16 @@
 <div id="app" style="display:none">
   <header>
     <div class="wordmark">NUTS<span class="bang">!</span></div>
-    <div class="sub">Children's Game Project · Playing for Charity</div>
+    <div class="sub" data-i18n="header.sub">Children's Game Project · Playing for Charity</div>
   </header>
 
   <nav>
-    <button data-tab="dash" class="on" onclick="showTab('dash')">🏠 Dashboard</button>
-    <button data-tab="disc" onclick="showTab('disc')">💬 Discussions</button>
-    <button data-tab="docs" onclick="showTab('docs')">📁 Documents</button>
-    <button data-tab="poll" onclick="showTab('poll')">🗳️ Poll</button>
-    <button data-tab="team" onclick="showTab('team')">🐿️ Team</button>
-    <button data-tab="about" onclick="showTab('about')">🌰 About</button>
+    <button data-tab="dash" class="on" onclick="showTab('dash')" data-i18n="nav.dash">🏠 Dashboard</button>
+    <button data-tab="disc" onclick="showTab('disc')" data-i18n="nav.disc">💬 Discussions</button>
+    <button data-tab="docs" onclick="showTab('docs')" data-i18n="nav.docs">📁 Documents</button>
+    <button data-tab="poll" onclick="showTab('poll')" data-i18n="nav.poll">🗳️ Poll</button>
+    <button data-tab="team" onclick="showTab('team')" data-i18n="nav.team">🐿️ Team</button>
+    <button data-tab="about" onclick="showTab('about')" data-i18n="nav.about">🌰 About</button>
   </nav>
 
   <div class="wrap">
@@ -222,29 +236,36 @@
             <path d="M60 14 C60 8 64 4 70 4" fill="none" stroke="#3B491F" stroke-width="5" stroke-linecap="round"/>
           </svg>
           <div class="goal-nums">
-            <span class="pill gold">Fundraising goal</span>
+            <span class="pill gold" data-i18n="dash.goalPill">Fundraising goal</span>
             <div class="big" id="raised-amt">$0</div>
-            <div class="of">raised of <b id="goal-amt">$500</b> profit goal</div>
-            <p class="muted" style="font-size:14px;margin-top:6px">Every dollar of profit goes to charity. Hit the goal and we go from there!</p>
-            <button class="btn ghost small" style="margin-top:10px" onclick="editRaised()">Update amount</button>
+            <div class="of"><span data-i18n="dash.raisedOf">raised of</span> <b id="goal-amt">$500</b> <span data-i18n="dash.profitGoal">profit goal</span></div>
+            <p class="muted" style="font-size:14px;margin-top:6px" data-i18n="dash.goalNote">Every dollar of profit goes to charity. Hit the goal and we go from there!</p>
+            <button class="btn ghost small" style="margin-top:10px" onclick="editRaised()" data-i18n="dash.updateBtn">Update amount</button>
           </div>
         </div>
       </div>
 
       <div class="row">
         <div class="card">
-          <span class="pill green">Launch target</span>
-          <h2 style="margin-top:6px">Thanksgiving 2026</h2>
+          <span class="pill green" data-i18n="dash.launchPill">Launch target</span>
+          <h2 style="margin-top:6px" data-i18n="dash.launchTitle">Thanksgiving 2026</h2>
           <div class="count" id="countdown"></div>
         </div>
         <div class="card">
-          <span class="pill">Mission</span>
-          <p id="mission-short" style="margin-top:8px;font-weight:600">We're building a children's game, selling a limited run, and giving the profits to charity. Full mission statement coming soon — see the About tab.</p>
+          <span class="pill" data-i18n="dash.missionPill">Mission</span>
+          <p id="mission-short" style="margin-top:8px;font-weight:600" data-i18n="dash.missionShort">We're building a children's game, selling a limited run, and giving the profits to charity. Full mission statement coming soon — see the About tab.</p>
         </div>
       </div>
 
       <div class="card">
-        <h2>Latest activity</h2>
+        <h2 data-i18n="dash.storyHeading">The Story Behind NUTS!</h2>
+        <p style="margin-top:8px" data-i18n="dash.storyCapstone">This project is also serving as my capstone for an MIT Executive Education course, <b>Applied Agentic AI for Organizational Transformation</b>.</p>
+        <p style="margin-top:10px" data-i18n-html="dash.storyOrigin">Nearly thirty years ago, a retired Marine Corps Colonel told me the story of Brigadier General Anthony McAuliffe, who commanded the besieged 101st Airborne Division at Bastogne during the Battle of the Bulge. When German forces demanded his surrender in December 1944, McAuliffe's entire reply was a single word: &ldquo;Nuts!&rdquo; The 101st held the line — and the story stuck with me ever since as a lesson in never giving up, which is exactly why it felt like the right name for this project. <a href="https://militaryhistorynow.com/2020/09/15/nuts-the-story-of-the-famous-american-reply-to-the-german-surrender-ultimatum-at-bastogne/" target="_blank" rel="noopener">Read the full story of Bastogne →</a></p>
+        <p style="margin-top:10px" data-i18n="dash.storyLegal">NUTS! is organized as a Florida LLC. All costs for this initial run are being covered personally — anyone who'd like to contribute their time, ideas, or simply purchase a unit for themselves is very welcome to. The first production run is limited to 50 units, and if the project turns a profit, all of it goes to charity (see the Poll tab to help choose which one). The legal entity will remain in place after this initial run concludes and may be repurposed for future projects.</p>
+      </div>
+
+      <div class="card">
+        <h2 data-i18n="dash.activityHeading">Latest activity</h2>
         <ul class="act" id="activity"><li class="loading">Loading…</li></ul>
       </div>
     </section>
@@ -252,8 +273,8 @@
     <!-- ---------- DISCUSSIONS ---------- -->
     <section id="tab-disc">
       <div class="topbar">
-        <h2 class="display" style="font-size:26px">Discussions</h2>
-        <button class="btn small" onclick="openThreadModal()">+ New thread</button>
+        <h2 class="display" style="font-size:26px" data-i18n="disc.heading">Discussions</h2>
+        <button class="btn small" onclick="openThreadModal()" data-i18n="disc.newThread">+ New thread</button>
       </div>
       <div class="chan-tabs" id="chan-tabs"></div>
       <div id="thread-list"><div class="loading">Loading…</div></div>
@@ -262,10 +283,10 @@
     <!-- ---------- DOCUMENTS ---------- -->
     <section id="tab-docs">
       <div class="topbar">
-        <h2 class="display" style="font-size:26px">Documents</h2>
+        <h2 class="display" style="font-size:26px" data-i18n="docs.heading">Documents</h2>
         <div style="display:flex;gap:8px">
-          <button class="btn ghost small" onclick="openModal('howto-modal')">How to link a file</button>
-          <button class="btn small" onclick="openModal('doc-modal')">+ Add document</button>
+          <button class="btn ghost small" onclick="openModal('howto-modal')" data-i18n="docs.howtoBtn">How to link a file</button>
+          <button class="btn small" onclick="openModal('doc-modal')" data-i18n="docs.addBtn">+ Add document</button>
         </div>
       </div>
       <div class="folder-tabs" id="folder-tabs"></div>
@@ -275,8 +296,8 @@
     <!-- ---------- POLL ---------- -->
     <section id="tab-poll">
       <div class="card">
-        <h2>Where should the money go?</h2>
-        <p class="muted">Vote for the charity partner you'd like to see NUTS! support. One vote per person.</p>
+        <h2 data-i18n="poll.heading">Where should the money go?</h2>
+        <p class="muted" data-i18n="poll.sub">Vote for the charity partner you'd like to see NUTS! support. One vote per person.</p>
         <div id="poll-body"><div class="loading">Loading…</div></div>
       </div>
     </section>
@@ -284,8 +305,8 @@
     <!-- ---------- TEAM ---------- -->
     <section id="tab-team">
       <div class="topbar">
-        <h2 class="display" style="font-size:26px">Team</h2>
-        <button class="btn small" onclick="openModal('team-modal')">+ Add yourself</button>
+        <h2 class="display" style="font-size:26px" data-i18n="team.heading">Team</h2>
+        <button class="btn small" onclick="openModal('team-modal')" data-i18n="team.addBtn">+ Add yourself</button>
       </div>
       <div class="card" id="team-list"><div class="loading">Loading…</div></div>
     </section>
@@ -293,117 +314,117 @@
     <!-- ---------- ABOUT ---------- -->
     <section id="tab-about">
       <div class="card">
-        <h2>Our mission</h2>
-        <p id="mission-full">Full mission statement coming soon. In short: NUTS! is a small, big-hearted project. We're designing a children's game, producing and selling it in a limited run, and donating the profits to charity. First goal: $500 in profit — then we grow from there.</p>
+        <h2 data-i18n="about.missionHeading">Our mission</h2>
+        <p id="mission-full" data-i18n="about.missionFull">Full mission statement coming soon. In short: NUTS! is a small, big-hearted project. We're designing a children's game, producing and selling it in a limited run, and donating the profits to charity. First goal: $500 in profit — then we grow from there.</p>
       </div>
       <div class="card">
-        <h2>The company</h2>
-        <p><b>NUTS! LLC</b> · Florida limited liability company · Effective August 26, 2026</p>
-        <p class="muted" style="margin-top:6px">Charity partner and fund-use details will be posted here once finalized.</p>
+        <h2 data-i18n="about.companyHeading">The company</h2>
+        <p data-i18n="about.companyLine1"><b>NUTS! LLC</b> · Florida limited liability company · Effective August 26, 2026</p>
+        <p class="muted" style="margin-top:6px" data-i18n="about.companyLine2">All costs for the initial 50-unit run are covered personally. Vote for the charity partner in the Poll tab — every dollar of profit, if any, goes to whichever cause wins.</p>
       </div>
       <div class="card">
-        <h2>How this site works</h2>
-        <p>This is our shared project room. Everything posted here — discussions, document links, team info — is visible to everyone with the access code. Nothing here is private, so keep truly sensitive details (personal financial info, passwords) out. Post in <b>Discussions</b>, link files in <b>Documents</b>, and add yourself to the <b>Team</b> page so we know who's who.</p>
+        <h2 data-i18n="about.howHeading">How this site works</h2>
+        <p data-i18n-html="about.howBody">This is our shared project room. Everything posted here — discussions, document links, team info — is visible to everyone with the access code. Nothing here is private, so keep truly sensitive details (personal financial info, passwords) out. Post in <b>Discussions</b>, link files in <b>Documents</b>, and add yourself to the <b>Team</b> page so we know who's who.</p>
       </div>
     </section>
 
-    <div class="footer-note">NUTS! project room · shared workspace — all members see the same content</div>
+    <div class="footer-note" data-i18n="footer.note">NUTS! project room · shared workspace — all members see the same content</div>
   </div>
 </div>
 
 <!-- ================= MODALS ================= -->
 <div class="modal-bg" id="name-modal">
   <div class="modal">
-    <h2>Who goes there? 🎖️</h2>
-    <p class="muted">Your name is shown on your posts so the team knows who said what.</p>
-    <label for="name-input">Your name</label>
-    <input id="name-input" placeholder="e.g. Sam R.">
-    <div class="actions"><button class="btn" onclick="saveName()">That's me</button></div>
+    <h2 data-i18n="nm.title">Who goes there? 🎖️</h2>
+    <p class="muted" data-i18n="nm.sub">Your name is shown on your posts so the team knows who said what.</p>
+    <label for="name-input" data-i18n="nm.label">Your name</label>
+    <input id="name-input" data-i18n-ph="nm.ph" placeholder="e.g. Sam R.">
+    <div class="actions"><button class="btn" onclick="saveName()" data-i18n="nm.btn">That's me</button></div>
   </div>
 </div>
 
 <div class="modal-bg" id="thread-modal">
   <div class="modal">
-    <h2>New thread</h2>
-    <label for="th-chan">Channel</label>
+    <h2 data-i18n="thm.title">New thread</h2>
+    <label for="th-chan" data-i18n="thm.channelLabel">Channel</label>
     <select id="th-chan"></select>
-    <label for="th-title">Title</label>
-    <input id="th-title" placeholder="What's this about?">
-    <label for="th-body">First post</label>
-    <textarea id="th-body" rows="4" placeholder="Kick off the conversation…"></textarea>
+    <label for="th-title" data-i18n="thm.titleLabel">Title</label>
+    <input id="th-title" data-i18n-ph="thm.titlePh" placeholder="What's this about?">
+    <label for="th-body" data-i18n="thm.bodyLabel">First post</label>
+    <textarea id="th-body" rows="4" data-i18n-ph="thm.bodyPh" placeholder="Kick off the conversation…"></textarea>
     <div class="actions">
-      <button class="btn ghost" onclick="closeModal('thread-modal')">Cancel</button>
-      <button class="btn green" onclick="createThread()">Post thread</button>
+      <button class="btn ghost" onclick="closeModal('thread-modal')" data-i18n="common.cancel">Cancel</button>
+      <button class="btn green" onclick="createThread()" data-i18n="thm.post">Post thread</button>
     </div>
   </div>
 </div>
 
 <div class="modal-bg" id="doc-modal">
   <div class="modal">
-    <h2>Add a document</h2>
-    <label for="doc-folder">Folder</label>
+    <h2 data-i18n="dm.title">Add a document</h2>
+    <label for="doc-folder" data-i18n="dm.folderLabel">Folder</label>
     <select id="doc-folder"></select>
-    <label for="doc-title">Title</label>
-    <input id="doc-title" placeholder="e.g. Game rules draft v2">
+    <label for="doc-title" data-i18n="dm.titleLabel">Title</label>
+    <input id="doc-title" data-i18n-ph="dm.titlePh" placeholder="e.g. Game rules draft v2">
 
-    <label for="doc-file" style="margin-top:16px">Upload a file</label>
-    <div class="file-drop" id="file-drop" onclick="document.getElementById('doc-file').click()">Click to choose a file (max 20MB)</div>
+    <label for="doc-file" style="margin-top:16px" data-i18n="dm.uploadLabel">Upload a file</label>
+    <div class="file-drop" id="file-drop" onclick="document.getElementById('doc-file').click()" data-i18n="dm.dropText">Click to choose a file (max 20MB)</div>
     <input id="doc-file" type="file" style="display:none" onchange="onFilePicked()">
     <div class="progress-wrap" id="progress-wrap">
       <div class="progress-bar"><div id="progress-fill"></div></div>
-      <div class="progress-label" id="progress-label">Uploading…</div>
+      <div class="progress-label" id="progress-label" data-i18n="dm.uploading">Uploading…</div>
     </div>
 
-    <div class="upload-divider">or</div>
+    <div class="upload-divider" data-i18n="dm.or">or</div>
 
-    <label for="doc-url">Link (Google Drive, Dropbox, etc.)</label>
-    <input id="doc-url" placeholder="https://…  (use this for very large files)">
-    <label for="doc-desc">Description / notes</label>
-    <textarea id="doc-desc" rows="3" placeholder="What is it? Anything to know?"></textarea>
+    <label for="doc-url" data-i18n="dm.linkLabel">Link (Google Drive, Dropbox, etc.)</label>
+    <input id="doc-url" data-i18n-ph="dm.linkPh" placeholder="https://…  (use this for very large files)">
+    <label for="doc-desc" data-i18n="dm.descLabel">Description / notes</label>
+    <textarea id="doc-desc" rows="3" data-i18n-ph="dm.descPh" placeholder="What is it? Anything to know?"></textarea>
     <div class="actions">
-      <button class="btn ghost" onclick="resetDocForm(); closeModal('doc-modal')">Cancel</button>
-      <button class="btn green" id="doc-submit-btn" onclick="addDoc()">Add document</button>
+      <button class="btn ghost" onclick="resetDocForm(); closeModal('doc-modal')" data-i18n="common.cancel">Cancel</button>
+      <button class="btn green" id="doc-submit-btn" onclick="addDoc()" data-i18n="dm.submit">Add document</button>
     </div>
   </div>
 </div>
 
 <div class="modal-bg" id="team-modal">
   <div class="modal">
-    <h2>Add yourself to the team</h2>
-    <label for="tm-name">Name</label>
+    <h2 data-i18n="tm.title">Add yourself to the team</h2>
+    <label for="tm-name" data-i18n="tm.nameLabel">Name</label>
     <input id="tm-name">
-    <label for="tm-role">Role on the project</label>
-    <input id="tm-role" placeholder="e.g. Game design, Marketing, Finance">
-    <label for="tm-contact">Contact (email or phone — optional)</label>
+    <label for="tm-role" data-i18n="tm.roleLabel">Role on the project</label>
+    <input id="tm-role" data-i18n-ph="tm.rolePh" placeholder="e.g. Game design, Marketing, Finance">
+    <label for="tm-contact" data-i18n="tm.contactLabel">Contact (email or phone — optional)</label>
     <input id="tm-contact">
     <div class="actions">
-      <button class="btn ghost" onclick="closeModal('team-modal')">Cancel</button>
-      <button class="btn green" onclick="addMember()">Add me</button>
+      <button class="btn ghost" onclick="closeModal('team-modal')" data-i18n="common.cancel">Cancel</button>
+      <button class="btn green" onclick="addMember()" data-i18n="tm.addMe">Add me</button>
     </div>
   </div>
 </div>
 
 <div class="modal-bg" id="howto-modal">
   <div class="modal howto">
-    <h2>Adding documents</h2>
-    <p class="muted"><b>Easiest:</b> in "Add document," click the upload box and pick a file — it's stored right here on the site and everyone can download it directly. Good for files under 20MB.</p>
-    <p class="muted" style="margin-top:8px">For bigger files (long videos, huge archives), link out to Google Drive or Dropbox instead. Two minutes, tops.</p>
-    <h3>📗 Google Drive</h3>
-    <ol>
+    <h2 data-i18n="howto.title">Adding documents</h2>
+    <p class="muted" data-i18n-html="howto.intro1"><b>Easiest:</b> in "Add document," click the upload box and pick a file — it's stored right here on the site and everyone can download it directly. Good for files under 20MB.</p>
+    <p class="muted" style="margin-top:8px" data-i18n="howto.intro2">For bigger files (long videos, huge archives), link out to Google Drive or Dropbox instead. Two minutes, tops.</p>
+    <h3 data-i18n="howto.gdriveHeading">📗 Google Drive</h3>
+    <ol data-i18n-html="howto.gdriveSteps">
       <li>Upload your file to Drive (drag it into <a href="https://drive.google.com" target="_blank" rel="noopener">drive.google.com</a>).</li>
       <li>Right-click the file → <b>Share</b>.</li>
       <li>Under "General access," change <b>Restricted</b> to <b>Anyone with the link</b> (leave as Viewer).</li>
       <li>Click <b>Copy link</b>, then paste it into "Add document" here.</li>
     </ol>
-    <h3>📘 Dropbox</h3>
-    <ol>
+    <h3 data-i18n="howto.dropboxHeading">📘 Dropbox</h3>
+    <ol data-i18n-html="howto.dropboxSteps">
       <li>Upload your file at <a href="https://dropbox.com" target="_blank" rel="noopener">dropbox.com</a>.</li>
       <li>Hover over the file → click <b>Share</b> (or Copy link).</li>
       <li>Make sure the link setting is <b>Anyone with this link can view</b>.</li>
       <li>Copy the link and paste it into "Add document" here.</li>
     </ol>
-    <p class="muted" style="margin-top:10px">Tip: name files clearly (e.g. <i>NUTS-budget-v3.xlsx</i>) so the list stays tidy.</p>
-    <div class="actions"><button class="btn" onclick="closeModal('howto-modal')">Got it</button></div>
+    <p class="muted" style="margin-top:10px" data-i18n-html="howto.tip">Tip: name files clearly (e.g. <i>NUTS-budget-v3.xlsx</i>) so the list stays tidy.</p>
+    <div class="actions"><button class="btn" onclick="closeModal('howto-modal')" data-i18n="howto.gotIt">Got it</button></div>
   </div>
 </div>
 
@@ -426,29 +447,176 @@ const db = getFirestore(fbApp);
 const storage = getStorage(fbApp);
 const MAX_FILE_BYTES = 20 * 1024 * 1024; // 20MB
 
+/* ================= i18n ================= */
+const I18N = {
+  en: {
+    "gate.sub":"Project workspace · authorized personnel only","gate.ph":"Access code","gate.btn":"Authenticate",
+    "gate.err":"Access denied — ask a team member for the code.",
+    "header.sub":"Children's Game Project · Playing for Charity",
+    "nav.dash":"🏠 Dashboard","nav.disc":"💬 Discussions","nav.docs":"📁 Documents","nav.poll":"🗳️ Poll","nav.team":"🐿️ Team","nav.about":"🌰 About",
+    "dash.goalPill":"Fundraising goal","dash.raisedOf":"raised of","dash.profitGoal":"profit goal",
+    "dash.goalNote":"Every dollar of profit goes to charity. Hit the goal and we go from there!","dash.updateBtn":"Update amount",
+    "dash.launchPill":"Launch target","dash.launchTitle":"Thanksgiving 2026","dash.missionPill":"Mission",
+    "dash.missionShort":"We're building a children's game, selling a limited run, and giving the profits to charity. Full mission statement coming soon — see the About tab.",
+    "dash.storyHeading":"The Story Behind NUTS!",
+    "dash.storyCapstone":"This project is also serving as my capstone for an MIT Executive Education course, <b>Applied Agentic AI for Organizational Transformation</b>.",
+    "dash.storyOrigin":"Nearly thirty years ago, a retired Marine Corps Colonel told me the story of Brigadier General Anthony McAuliffe, who commanded the besieged 101st Airborne Division at Bastogne during the Battle of the Bulge. When German forces demanded his surrender in December 1944, McAuliffe's entire reply was a single word: \u201CNuts!\u201D The 101st held the line — and the story stuck with me ever since as a lesson in never giving up, which is exactly why it felt like the right name for this project. <a href=\"https://militaryhistorynow.com/2020/09/15/nuts-the-story-of-the-famous-american-reply-to-the-german-surrender-ultimatum-at-bastogne/\" target=\"_blank\" rel=\"noopener\">Read the full story of Bastogne →</a>",
+    "dash.storyLegal":"NUTS! is organized as a Florida LLC. All costs for this initial run are being covered personally — anyone who'd like to contribute their time, ideas, or simply purchase a unit for themselves is very welcome to. The first production run is limited to 50 units, and if the project turns a profit, all of it goes to charity (see the Poll tab to help choose which one). The legal entity will remain in place after this initial run concludes and may be repurposed for future projects.",
+    "dash.activityHeading":"Latest activity",
+    "disc.heading":"Discussions","disc.newThread":"+ New thread","disc.empty":"No threads here yet — start the first one!",
+    "disc.postSingular":"post","disc.postPlural":"posts","disc.replyPh":"Write a reply…","disc.replyBtn":"Reply",
+    "disc.threadMoved":"That thread just moved — refreshing.","disc.titleAndBody":"A title and a first post get things rolling.",
+    "docs.heading":"Documents","docs.howtoBtn":"How to link a file","docs.addBtn":"+ Add document",
+    "docs.emptyPrefix":"Nothing in","docs.emptySuffix":"yet. Add the first document!",
+    "docs.addedBy":"Added by","docs.alsoLinked":"also linked","docs.removeBtn":"Remove",
+    "docs.titleRequired":"Give it a title so people know what it is.","docs.needFileOrLink":"Upload a file or paste a link.",
+    "docs.fileTooBig":"That file is over 20MB. Use the Drive/Dropbox link option below instead.",
+    "docs.uploadFail":"That upload didn't go through — check your connection and try again.",
+    "docs.confirmRemovePrefix":"Remove \"","docs.confirmRemoveSuffix":"\"? This can't be undone.",
+    "poll.heading":"Where should the money go?","poll.sub":"Vote for the charity partner you'd like to see NUTS! support. One vote per person.",
+    "poll.voteSingular":"vote","poll.votePlural":"votes","poll.castSoFar":"cast so far","poll.castVote":"Cast your vote",
+    "poll.otherPh":"Tell us where…","poll.votedPrefix":"✅ You voted for",
+    "poll.votedThanks":"Thanks for weighing in — one vote per person, so this is locked in.",
+    "poll.seeOther":"See \"Other\" suggestions","poll.pickFirst":"Pick an option first.",
+    "poll.otherRequired":"Let us know what \"Other\" means to you.","poll.alreadyVoted":"Looks like you've already voted.",
+    "choice.fisher":"Fisher House Foundation","choice.wwp":"Wounded Warrior Project",
+    "choice.sowf":"Special Operations Warrior Foundation","choice.mcsf":"Marine Corps Scholarship Fund","choice.other":"Other (please specify)",
+    "team.heading":"Team","team.addBtn":"+ Add yourself","team.empty":"Nobody's signed the roster yet — be first!",
+    "team.nameRequired":"Name, please!",
+    "chan.general":"General","chan.design":"Game Design","chan.marketing":"Marketing & Sales","chan.fundraising":"Fundraising",
+    "folder.design":"Game Design","folder.legal":"Business & Legal","folder.marketing":"Marketing","folder.financials":"Financials","folder.misc":"Misc",
+    "about.missionHeading":"Our mission",
+    "about.missionFull":"Full mission statement coming soon. In short: NUTS! is a small, big-hearted project. We're designing a children's game, producing and selling it in a limited run, and donating the profits to charity. First goal: $500 in profit — then we grow from there.",
+    "about.companyHeading":"The company","about.companyLine1":"<b>NUTS! LLC</b> · Florida limited liability company · Effective August 26, 2026",
+    "about.companyLine2":"All costs for the initial 50-unit run are covered personally. Vote for the charity partner in the Poll tab — every dollar of profit, if any, goes to whichever cause wins.",
+    "about.howHeading":"How this site works",
+    "about.howBody":"This is our shared project room. Everything posted here — discussions, document links, team info — is visible to everyone with the access code. Nothing here is private, so keep truly sensitive details (personal financial info, passwords) out. Post in <b>Discussions</b>, link files in <b>Documents</b>, and add yourself to the <b>Team</b> page so we know who's who.",
+    "footer.note":"NUTS! project room · shared workspace — all members see the same content",
+    "nm.title":"Who goes there? 🎖️","nm.sub":"Your name is shown on your posts so the team knows who said what.",
+    "nm.label":"Your name","nm.ph":"e.g. Sam R.","nm.btn":"That's me",
+    "thm.title":"New thread","thm.channelLabel":"Channel","thm.titleLabel":"Title","thm.titlePh":"What's this about?",
+    "thm.bodyLabel":"First post","thm.bodyPh":"Kick off the conversation…","thm.post":"Post thread","common.cancel":"Cancel",
+    "dm.title":"Add a document","dm.folderLabel":"Folder","dm.titleLabel":"Title","dm.titlePh":"e.g. Game rules draft v2",
+    "dm.uploadLabel":"Upload a file","dm.dropText":"Click to choose a file (max 20MB)","dm.uploading":"Uploading…","dm.or":"or",
+    "dm.linkLabel":"Link (Google Drive, Dropbox, etc.)","dm.linkPh":"https://…  (use this for very large files)",
+    "dm.descLabel":"Description / notes","dm.descPh":"What is it? Anything to know?","dm.submit":"Add document",
+    "tm.title":"Add yourself to the team","tm.nameLabel":"Name","tm.roleLabel":"Role on the project",
+    "tm.rolePh":"e.g. Game design, Marketing, Finance","tm.contactLabel":"Contact (email or phone — optional)","tm.addMe":"Add me",
+    "howto.title":"Adding documents",
+    "howto.intro1":"<b>Easiest:</b> in \"Add document,\" click the upload box and pick a file — it's stored right here on the site and everyone can download it directly. Good for files under 20MB.",
+    "howto.intro2":"For bigger files (long videos, huge archives), link out to Google Drive or Dropbox instead. Two minutes, tops.",
+    "howto.gdriveHeading":"📗 Google Drive",
+    "howto.gdriveSteps":"<li>Upload your file to Drive (drag it into <a href=\"https://drive.google.com\" target=\"_blank\" rel=\"noopener\">drive.google.com</a>).</li><li>Right-click the file → <b>Share</b>.</li><li>Under \"General access,\" change <b>Restricted</b> to <b>Anyone with the link</b> (leave as Viewer).</li><li>Click <b>Copy link</b>, then paste it into \"Add document\" here.</li>",
+    "howto.dropboxHeading":"📘 Dropbox",
+    "howto.dropboxSteps":"<li>Upload your file at <a href=\"https://dropbox.com\" target=\"_blank\" rel=\"noopener\">dropbox.com</a>.</li><li>Hover over the file → click <b>Share</b> (or Copy link).</li><li>Make sure the link setting is <b>Anyone with this link can view</b>.</li><li>Copy the link and paste it into \"Add document\" here.</li>",
+    "howto.tip":"Tip: name files clearly (e.g. <i>NUTS-budget-v3.xlsx</i>) so the list stays tidy.","howto.gotIt":"Got it",
+    "activity.started":"started","activity.repliedIn":"replied in","activity.added":"added",
+    "activity.votedPoll":"voted in the charity poll","activity.empty":"Quiet so far. Start a thread or add a document to get things moving.",
+    "activity.someone":"Someone",
+    "ago.justNow":"just now","ago.mAgo":"m ago","ago.hAgo":"h ago",
+    "count.days":"days","count.hours":"hours","count.mins":"mins","count.launched":"Launched!",
+    "alert.saveFail":"Hmm — that didn't save. Check your connection and try again.",
+    "alert.raisedPrompt":"Amount raised so far (numbers only):","alert.numbersOnly":"Numbers only, please."
+  },
+  pt: {
+    "gate.sub":"Espaço do projeto · somente para pessoas autorizadas","gate.ph":"Código de acesso","gate.btn":"Entrar",
+    "gate.err":"Acesso negado — peça o código a alguém da equipe.",
+    "header.sub":"Projeto de Jogo Infantil · Jogando por uma Causa",
+    "nav.dash":"🏠 Painel","nav.disc":"💬 Discussões","nav.docs":"📁 Documentos","nav.poll":"🗳️ Enquete","nav.team":"🐿️ Equipe","nav.about":"🌰 Sobre",
+    "dash.goalPill":"Meta de arrecadação","dash.raisedOf":"arrecadado de","dash.profitGoal":"de meta de lucro",
+    "dash.goalNote":"Cada dólar de lucro vai para caridade. Ao bater a meta, seguimos em frente!","dash.updateBtn":"Atualizar valor",
+    "dash.launchPill":"Meta de lançamento","dash.launchTitle":"Ação de Graças de 2026","dash.missionPill":"Missão",
+    "dash.missionShort":"Estamos criando um jogo infantil, vendendo uma edição limitada e doando os lucros para caridade. Missão completa em breve — veja a aba Sobre.",
+    "dash.storyHeading":"A História por Trás do NUTS!",
+    "dash.storyCapstone":"Este projeto também é meu projeto final (capstone) de um curso de Educação Executiva do MIT, <b>Applied Agentic AI for Organizational Transformation</b>.",
+    "dash.storyOrigin":"Há quase trinta anos, um Coronel aposentado do Corpo de Fuzileiros Navais dos EUA me contou a história do Brigadeiro-General Anthony McAuliffe, que comandava a cercada 101ª Divisão Aerotransportada em Bastogne durante a Batalha das Ardenas. Quando as forças alemãs exigiram sua rendição em dezembro de 1944, a resposta de McAuliffe foi uma única palavra: \u201CNuts!\u201D (algo como \u201CNada disso!\u201D). A 101ª segurou a linha — e essa história ficou comigo desde então como uma lição de nunca desistir, e foi exatamente por isso que pareceu o nome certo para este projeto. <a href=\"https://militaryhistorynow.com/2020/09/15/nuts-the-story-of-the-famous-american-reply-to-the-german-surrender-ultimatum-at-bastogne/\" target=\"_blank\" rel=\"noopener\">Leia a história completa de Bastogne →</a>",
+    "dash.storyLegal":"O NUTS! está organizado como uma LLC (sociedade limitada) da Flórida. Todos os custos desta primeira produção estão sendo cobertos pessoalmente — qualquer pessoa que queira contribuir com tempo, ideias ou simplesmente comprar uma unidade para si é muito bem-vinda. A primeira produção é limitada a 50 unidades e, se o projeto gerar lucro, tudo será destinado à caridade (veja a aba Enquete para ajudar a escolher qual). A entidade legal continuará existindo após a conclusão desta primeira etapa e poderá ser reaproveitada em projetos futuros.",
+    "dash.activityHeading":"Atividade recente",
+    "disc.heading":"Discussões","disc.newThread":"+ Novo tópico","disc.empty":"Nenhum tópico por aqui ainda — comece o primeiro!",
+    "disc.postSingular":"postagem","disc.postPlural":"postagens","disc.replyPh":"Escreva uma resposta…","disc.replyBtn":"Responder",
+    "disc.threadMoved":"Esse tópico acabou de mudar — atualizando.","disc.titleAndBody":"Um título e uma primeira postagem já dão o pontapé inicial.",
+    "docs.heading":"Documentos","docs.howtoBtn":"Como vincular um arquivo","docs.addBtn":"+ Adicionar documento",
+    "docs.emptyPrefix":"Nada em","docs.emptySuffix":"ainda. Adicione o primeiro documento!",
+    "docs.addedBy":"Adicionado por","docs.alsoLinked":"também vinculado","docs.removeBtn":"Remover",
+    "docs.titleRequired":"Dê um título para que as pessoas saibam do que se trata.","docs.needFileOrLink":"Envie um arquivo ou cole um link.",
+    "docs.fileTooBig":"Esse arquivo tem mais de 20MB. Use a opção de link do Drive/Dropbox abaixo.",
+    "docs.uploadFail":"O envio não foi concluído — verifique sua conexão e tente novamente.",
+    "docs.confirmRemovePrefix":"Remover \"","docs.confirmRemoveSuffix":"\"? Isso não pode ser desfeito.",
+    "poll.heading":"Para onde o dinheiro deve ir?","poll.sub":"Vote na instituição de caridade que você gostaria que o NUTS! apoiasse. Um voto por pessoa.",
+    "poll.voteSingular":"voto","poll.votePlural":"votos","poll.castSoFar":"registrados até agora","poll.castVote":"Registrar seu voto",
+    "poll.otherPh":"Diga para onde…","poll.votedPrefix":"✅ Você votou em",
+    "poll.votedThanks":"Obrigado por participar — um voto por pessoa, então seu voto está confirmado.",
+    "poll.seeOther":"Ver sugestões de \"Outro\"","poll.pickFirst":"Escolha uma opção primeiro.",
+    "poll.otherRequired":"Diga o que você quis dizer com \"Outro\".","poll.alreadyVoted":"Parece que você já votou.",
+    "choice.fisher":"Fisher House Foundation","choice.wwp":"Wounded Warrior Project",
+    "choice.sowf":"Special Operations Warrior Foundation","choice.mcsf":"Marine Corps Scholarship Fund","choice.other":"Outro (especifique)",
+    "team.heading":"Equipe","team.addBtn":"+ Adicionar-se","team.empty":"Ainda ninguém se cadastrou — seja o primeiro!",
+    "team.nameRequired":"Nome, por favor!",
+    "chan.general":"Geral","chan.design":"Design do Jogo","chan.marketing":"Marketing e Vendas","chan.fundraising":"Arrecadação",
+    "folder.design":"Design do Jogo","folder.legal":"Negócios e Jurídico","folder.marketing":"Marketing","folder.financials":"Financeiro","folder.misc":"Diversos",
+    "about.missionHeading":"Nossa missão",
+    "about.missionFull":"Missão completa em breve. Resumindo: o NUTS! é um projeto pequeno e de grande coração. Estamos criando um jogo infantil, produzindo e vendendo uma edição limitada, e doando os lucros para caridade. Primeira meta: $500 de lucro — depois seguimos a partir daí.",
+    "about.companyHeading":"A empresa","about.companyLine1":"<b>NUTS! LLC</b> · sociedade limitada (LLC) da Flórida · Em vigor desde 26 de agosto de 2026",
+    "about.companyLine2":"Todos os custos da primeira produção de 50 unidades são cobertos pessoalmente. Vote na instituição de caridade na aba Enquete — cada dólar de lucro, se houver, vai para a causa vencedora.",
+    "about.howHeading":"Como funciona este site",
+    "about.howBody":"Este é o nosso espaço de projeto compartilhado. Tudo o que é publicado aqui — discussões, links de documentos, informações da equipe — fica visível para todos com o código de acesso. Nada aqui é privado, então mantenha informações realmente sensíveis (dados financeiros pessoais, senhas) fora daqui. Publique em <b>Discussões</b>, vincule arquivos em <b>Documentos</b> e adicione-se à página <b>Equipe</b> para que saibamos quem é quem.",
+    "footer.note":"Sala do projeto NUTS! · espaço compartilhado — todos os membros veem o mesmo conteúdo",
+    "nm.title":"Quem está aí? 🎖️","nm.sub":"Seu nome aparece nas suas postagens para que a equipe saiba quem disse o quê.",
+    "nm.label":"Seu nome","nm.ph":"ex.: Sam R.","nm.btn":"Sou eu",
+    "thm.title":"Novo tópico","thm.channelLabel":"Canal","thm.titleLabel":"Título","thm.titlePh":"Sobre o que é isso?",
+    "thm.bodyLabel":"Primeira postagem","thm.bodyPh":"Comece a conversa…","thm.post":"Publicar tópico","common.cancel":"Cancelar",
+    "dm.title":"Adicionar um documento","dm.folderLabel":"Pasta","dm.titleLabel":"Título","dm.titlePh":"ex.: Rascunho das regras v2",
+    "dm.uploadLabel":"Enviar um arquivo","dm.dropText":"Clique para escolher um arquivo (máx. 20MB)","dm.uploading":"Enviando…","dm.or":"ou",
+    "dm.linkLabel":"Link (Google Drive, Dropbox, etc.)","dm.linkPh":"https://…  (use para arquivos muito grandes)",
+    "dm.descLabel":"Descrição / notas","dm.descPh":"O que é? Algo importante a saber?","dm.submit":"Adicionar documento",
+    "tm.title":"Adicionar-se à equipe","tm.nameLabel":"Nome","tm.roleLabel":"Função no projeto",
+    "tm.rolePh":"ex.: Design de jogo, Marketing, Financeiro","tm.contactLabel":"Contato (e-mail ou telefone — opcional)","tm.addMe":"Adicionar-me",
+    "howto.title":"Adicionando documentos",
+    "howto.intro1":"<b>Mais fácil:</b> em \"Adicionar documento\", clique na caixa de envio e escolha um arquivo — ele fica armazenado aqui no site e todos podem baixá-lo diretamente. Ótimo para arquivos com menos de 20MB.",
+    "howto.intro2":"Para arquivos maiores (vídeos longos, arquivos enormes), use um link do Google Drive ou Dropbox. Leva só dois minutos.",
+    "howto.gdriveHeading":"📗 Google Drive",
+    "howto.gdriveSteps":"<li>Envie seu arquivo para o Drive (arraste para <a href=\"https://drive.google.com\" target=\"_blank\" rel=\"noopener\">drive.google.com</a>).</li><li>Clique com o botão direito no arquivo → <b>Compartilhar</b>.</li><li>Em \"Acesso geral\", mude de <b>Restrito</b> para <b>Qualquer pessoa com o link</b> (deixe como Leitor).</li><li>Clique em <b>Copiar link</b> e cole em \"Adicionar documento\" aqui.</li>",
+    "howto.dropboxHeading":"📘 Dropbox",
+    "howto.dropboxSteps":"<li>Envie seu arquivo em <a href=\"https://dropbox.com\" target=\"_blank\" rel=\"noopener\">dropbox.com</a>.</li><li>Passe o mouse sobre o arquivo → clique em <b>Compartilhar</b> (ou Copiar link).</li><li>Confirme que a configuração do link é <b>Qualquer pessoa com este link pode ver</b>.</li><li>Copie o link e cole em \"Adicionar documento\" aqui.</li>",
+    "howto.tip":"Dica: nomeie os arquivos claramente (ex.: <i>NUTS-orcamento-v3.xlsx</i>) para manter a lista organizada.","howto.gotIt":"Entendi",
+    "activity.started":"iniciou","activity.repliedIn":"respondeu em","activity.added":"adicionou",
+    "activity.votedPoll":"votou na enquete de caridade","activity.empty":"Tudo quieto por aqui. Comece um tópico ou adicione um documento para movimentar as coisas.",
+    "activity.someone":"Alguém",
+    "ago.justNow":"agora mesmo","ago.mAgo":"min atrás","ago.hAgo":"h atrás",
+    "count.days":"dias","count.hours":"horas","count.mins":"min","count.launched":"Lançado!",
+    "alert.saveFail":"Ops — isso não foi salvo. Verifique sua conexão e tente novamente.",
+    "alert.raisedPrompt":"Valor arrecadado até agora (somente números):","alert.numbersOnly":"Somente números, por favor."
+  }
+};
+let currentLang = 'en';
+function t(key){
+  const dict = I18N[currentLang] || I18N.en;
+  return dict[key] !== undefined ? dict[key] : (I18N.en[key] !== undefined ? I18N.en[key] : key);
+}
+
 /* ================= config ================= */
 const CODE = 'ROCHAMBEAU';
 const GOAL = 500;
 const LAUNCH = new Date('2026-11-26T00:00:00');
 const CHANNELS = [
-  {id:'general', label:'🌰 General'},
-  {id:'design',  label:'🎲 Game Design'},
-  {id:'marketing', label:'📣 Marketing & Sales'},
-  {id:'fundraising', label:'💚 Fundraising'}
+  {id:'general', ic:'🌰', key:'chan.general'},
+  {id:'design',  ic:'🎲', key:'chan.design'},
+  {id:'marketing', ic:'📣', key:'chan.marketing'},
+  {id:'fundraising', ic:'💚', key:'chan.fundraising'}
 ];
 const FOLDERS = [
-  {id:'design', label:'🎲 Game Design', ic:'🎲'},
-  {id:'legal',  label:'📜 Business & Legal', ic:'📜'},
-  {id:'marketing', label:'📣 Marketing', ic:'📣'},
-  {id:'financials', label:'💵 Financials', ic:'💵'},
-  {id:'misc', label:'📦 Misc', ic:'📦'}
+  {id:'design', ic:'🎲', key:'folder.design'},
+  {id:'legal',  ic:'📜', key:'folder.legal'},
+  {id:'marketing', ic:'📣', key:'folder.marketing'},
+  {id:'financials', ic:'💵', key:'folder.financials'},
+  {id:'misc', ic:'📦', key:'folder.misc'}
 ];
 const POLL_CHOICES = [
-  {id:'fisher', label:'Fisher House Foundation'},
-  {id:'wwp',    label:'Wounded Warrior Project'},
-  {id:'sowf',   label:'Special Operations Warrior Foundation'},
-  {id:'mcsf',   label:'Marine Corps Scholarship Fund'},
-  {id:'other',  label:'Other (please specify)'}
+  {id:'fisher', key:'choice.fisher'},
+  {id:'wwp',    key:'choice.wwp'},
+  {id:'sowf',   key:'choice.sowf'},
+  {id:'mcsf',   key:'choice.mcsf'},
+  {id:'other',  key:'choice.other'}
 ];
 
 let me = '';
@@ -491,8 +659,31 @@ async function sSet(key, val, shared){
     catch(e){ return true; } /* private-browsing fallback: keep going in memory */
   }
   try{ await setDoc(doc(db, 'vdr', key), { value: JSON.stringify(val), ts: Date.now() }); return true; }
-  catch(e){ console.error('save failed', key, e); alert('Hmm — that didn\'t save. Check your connection and try again.'); return false; }
+  catch(e){ console.error('save failed', key, e); alert(t('alert.saveFail')); return false; }
 }
+
+/* ================= language ================= */
+function applyLang(lang){
+  currentLang = (lang === 'pt') ? 'pt' : 'en';
+  document.documentElement.lang = currentLang === 'pt' ? 'pt-BR' : 'en';
+  document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-html]').forEach(el=>{ el.innerHTML = t(el.dataset.i18nHtml); });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ el.placeholder = t(el.dataset.i18nPh); });
+  const be = document.getElementById('lang-btn-en'), bp = document.getElementById('lang-btn-pt');
+  if(be) be.classList.toggle('on', currentLang==='en');
+  if(bp) bp.classList.toggle('on', currentLang==='pt');
+}
+async function setLang(lang){
+  applyLang(lang);
+  await sSet('lang', currentLang, false);
+  buildChanTabs(); buildFolderTabs(); fillSelects();
+  renderThreads(); renderDocs(); renderTeam(); renderPoll(); renderActivity(); renderGoal();
+  updateCountdown();
+}
+(async function initLang(){
+  const saved = await sGet('lang', false, 'en');
+  applyLang(saved);
+})();
 
 /* ================= gate ================= */
 function normalize(s){ return (s||'').trim().toUpperCase().replace(/\s+/g,''); }
@@ -505,7 +696,7 @@ function tryUnlock(){
   const v = normalize(document.getElementById('gate-input').value);
   if(v === 'ROCHAMBEAU'){ unlock(); }
   else{
-    document.getElementById('gate-err').textContent = 'Access denied — ask a team member for the code.';
+    document.getElementById('gate-err').textContent = t('gate.err');
     document.getElementById('gate-input').value = '';
   }
 }
@@ -570,61 +761,63 @@ function renderGoal(){
 }
 async function editRaised(){
   if(needName()) return;
-  const v = prompt('Amount raised so far (numbers only):', settingsCache.raised||0);
+  const v = prompt(t('alert.raisedPrompt'), settingsCache.raised||0);
   if(v===null) return;
   const n = Number(String(v).replace(/[^0-9.]/g,''));
-  if(isNaN(n)){ alert('Numbers only, please.'); return; }
+  if(isNaN(n)){ alert(t('alert.numbersOnly')); return; }
   settingsCache.raised = n;
   if(await sSet('settings', settingsCache, true)) renderGoal();
 }
-function startCountdown(){
+function updateCountdown(){
   const el = document.getElementById('countdown');
-  function tick(){
-    let ms = LAUNCH - new Date();
-    if(ms <= 0){ el.innerHTML = '<div><b>🎉</b><span>Launched!</span></div>'; return; }
-    const d = Math.floor(ms/86400000), h = Math.floor(ms/3600000)%24, m = Math.floor(ms/60000)%60;
-    el.innerHTML = `<div><b>${d}</b><span>days</span></div><div><b>${h}</b><span>hours</span></div><div><b>${m}</b><span>mins</span></div>`;
-  }
-  tick(); setInterval(tick, 30000);
+  let ms = LAUNCH - new Date();
+  if(ms <= 0){ el.innerHTML = `<div><b>🎉</b><span>${t('count.launched')}</span></div>`; return; }
+  const d = Math.floor(ms/86400000), h = Math.floor(ms/3600000)%24, m = Math.floor(ms/60000)%60;
+  el.innerHTML = `<div><b>${d}</b><span>${t('count.days')}</span></div><div><b>${h}</b><span>${t('count.hours')}</span></div><div><b>${m}</b><span>${t('count.mins')}</span></div>`;
 }
+function startCountdown(){ updateCountdown(); setInterval(updateCountdown, 30000); }
 
 /* ================= discussions ================= */
 function buildChanTabs(){
   document.getElementById('chan-tabs').innerHTML = CHANNELS.map(c=>
-    `<button data-c="${c.id}" class="${c.id===curChan?'on':''}" onclick="pickChan('${c.id}')">${c.label}</button>`).join('');
+    `<button data-c="${c.id}" class="${c.id===curChan?'on':''}" onclick="pickChan('${c.id}')">${c.ic} ${t(c.key)}</button>`).join('');
 }
 function pickChan(id){ curChan=id; buildChanTabs(); renderThreads(); }
 function fillSelects(){
-  document.getElementById('th-chan').innerHTML = CHANNELS.map(c=>`<option value="${c.id}">${c.label.replace(/^\S+\s/,'')}</option>`).join('');
-  document.getElementById('doc-folder').innerHTML = FOLDERS.map(f=>`<option value="${f.id}">${f.label.replace(/^\S+\s/,'')}</option>`).join('');
+  document.getElementById('th-chan').innerHTML = CHANNELS.map(c=>`<option value="${c.id}">${t(c.key)}</option>`).join('');
+  document.getElementById('doc-folder').innerHTML = FOLDERS.map(f=>`<option value="${f.id}">${t(f.key)}</option>`).join('');
 }
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function ago(ts){
   const s = (Date.now()-ts)/1000;
-  if(s<60) return 'just now';
-  if(s<3600) return Math.floor(s/60)+'m ago';
-  if(s<86400) return Math.floor(s/3600)+'h ago';
-  return new Date(ts).toLocaleDateString(undefined,{month:'short',day:'numeric'});
+  if(s<60) return t('ago.justNow');
+  if(s<3600) return Math.floor(s/60)+t('ago.mAgo');
+  if(s<86400) return Math.floor(s/3600)+t('ago.hAgo');
+  return new Date(ts).toLocaleDateString(currentLang==='pt' ? 'pt-BR' : undefined, {month:'short',day:'numeric'});
 }
 function renderThreads(){
   const list = threadsCache[curChan] || [];
   const el = document.getElementById('thread-list');
-  if(!list.length){ el.innerHTML = '<div class="card empty">No threads here yet — start the first one!</div>'; return; }
-  el.innerHTML = list.slice().sort((a,b)=>b.ts-a.ts).map(t=>`
-    <div class="thread" id="t-${t.id}">
-      <div class="thread-head" onclick="toggleThread('${t.id}')">
-        <h3>${esc(t.title)}</h3>
-        <span class="pill">${1+(t.replies?.length||0)} post${(t.replies?.length||0)?'s':''}</span>
+  if(!list.length){ el.innerHTML = `<div class="card empty">${t('disc.empty')}</div>`; return; }
+  el.innerHTML = list.slice().sort((a,b)=>b.ts-a.ts).map(th=>{
+    const count = 1+(th.replies?.length||0);
+    const postWord = t(count===1 ? 'disc.postSingular' : 'disc.postPlural');
+    return `
+    <div class="thread" id="t-${th.id}">
+      <div class="thread-head" onclick="toggleThread('${th.id}')">
+        <h3>${esc(th.title)}</h3>
+        <span class="pill">${count} ${postWord}</span>
       </div>
       <div class="thread-body">
-        <div class="post"><div class="meta">${esc(t.author)} · ${ago(t.ts)}</div>${esc(t.body)}</div>
-        ${(t.replies||[]).map(r=>`<div class="post reply"><div class="meta">${esc(r.author)} · ${ago(r.ts)}</div>${esc(r.body)}</div>`).join('')}
+        <div class="post"><div class="meta">${esc(th.author)} · ${ago(th.ts)}</div>${esc(th.body)}</div>
+        ${(th.replies||[]).map(r=>`<div class="post reply"><div class="meta">${esc(r.author)} · ${ago(r.ts)}</div>${esc(r.body)}</div>`).join('')}
         <div class="composer">
-          <textarea id="re-${t.id}" rows="2" placeholder="Write a reply…"></textarea>
-          <button class="btn green small" onclick="reply('${t.id}')">Reply</button>
+          <textarea id="re-${th.id}" rows="2" placeholder="${t('disc.replyPh')}"></textarea>
+          <button class="btn green small" onclick="reply('${th.id}')">${t('disc.replyBtn')}</button>
         </div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 function toggleThread(id){ document.getElementById('t-'+id).classList.toggle('open'); }
 function openThreadModal(){
@@ -637,7 +830,7 @@ async function createThread(){
   const chan = document.getElementById('th-chan').value;
   const title = document.getElementById('th-title').value.trim();
   const body = document.getElementById('th-body').value.trim();
-  if(!title || !body){ alert('A title and a first post get things rolling.'); return; }
+  if(!title || !body){ alert(t('disc.titleAndBody')); return; }
   const fresh = await sGet('threads-'+chan, true, []);
   fresh.push({id:Date.now().toString(36), title, body, author:me, ts:Date.now(), replies:[]});
   if(await sSet('threads-'+chan, fresh, true)){
@@ -651,9 +844,9 @@ async function reply(tid){
   const body = box.value.trim();
   if(!body) return;
   const fresh = await sGet('threads-'+curChan, true, []);
-  const t = fresh.find(x=>x.id===tid);
-  if(!t){ alert('That thread just moved — refreshing.'); refreshAll(); return; }
-  (t.replies = t.replies||[]).push({author:me, body, ts:Date.now()});
+  const th = fresh.find(x=>x.id===tid);
+  if(!th){ alert(t('disc.threadMoved')); refreshAll(); return; }
+  (th.replies = th.replies||[]).push({author:me, body, ts:Date.now()});
   if(await sSet('threads-'+curChan, fresh, true)){
     threadsCache[curChan]=fresh; renderThreads();
     document.getElementById('t-'+tid).classList.add('open');
@@ -663,14 +856,14 @@ async function reply(tid){
 /* ================= documents ================= */
 function buildFolderTabs(){
   document.getElementById('folder-tabs').innerHTML = FOLDERS.map(f=>
-    `<button class="${f.id===curFolder?'on':''}" onclick="pickFolder('${f.id}')">${f.label}</button>`).join('');
+    `<button class="${f.id===curFolder?'on':''}" onclick="pickFolder('${f.id}')">${f.ic} ${t(f.key)}</button>`).join('');
 }
 function pickFolder(id){ curFolder=id; buildFolderTabs(); renderDocs(); }
 function renderDocs(){
   const list = docsCache.filter(d=>d.folder===curFolder).sort((a,b)=>b.ts-a.ts);
   const el = document.getElementById('doc-list');
   const f = FOLDERS.find(x=>x.id===curFolder);
-  if(!list.length){ el.innerHTML = `<div class="empty">Nothing in ${f.label.replace(/^\S+\s/,'')} yet. Add the first document!</div>`; return; }
+  if(!list.length){ el.innerHTML = `<div class="empty">${t('docs.emptyPrefix')} ${t(f.key)} ${t('docs.emptySuffix')}</div>`; return; }
   el.innerHTML = list.map(d=>{
     const isFile = !!d.fileURL;
     const icon = isFile ? iconFor(d.fileName||d.title, d.contentType) : f.ic;
@@ -682,9 +875,9 @@ function renderDocs(){
       <div>
         <h3>${primaryLink ? `<a href="${esc(primaryLink)}" target="_blank" rel="noopener">${linkLabel}</a>` : esc(d.title)}</h3>
         ${d.desc ? `<p>${esc(d.desc)}</p>` : ''}
-        <div class="meta">Added by ${esc(d.addedBy)} · ${ago(d.ts)}${isFile ? `<span class="filesize-pill">${fmtBytes(d.fileSize||0)}</span>` : ''}${(isFile && d.url) ? ` · <a href="${esc(d.url)}" target="_blank" rel="noopener">also linked ↗</a>` : ''}</div>
+        <div class="meta">${t('docs.addedBy')} ${esc(d.addedBy)} · ${ago(d.ts)}${isFile ? `<span class="filesize-pill">${fmtBytes(d.fileSize||0)}</span>` : ''}${(isFile && d.url) ? ` · <a href="${esc(d.url)}" target="_blank" rel="noopener">${t('docs.alsoLinked')} ↗</a>` : ''}</div>
       </div>
-      <div class="doc-actions"><button class="del-btn" onclick="deleteDoc('${d.id}')">Remove</button></div>
+      <div class="doc-actions"><button class="del-btn" onclick="deleteDoc('${d.id}')">${t('docs.removeBtn')}</button></div>
     </div>`;
   }).join('');
 }
@@ -692,11 +885,11 @@ function onFilePicked(){
   const input = document.getElementById('doc-file');
   const f = input.files && input.files[0];
   const drop = document.getElementById('file-drop');
-  if(!f){ pickedFile = null; drop.textContent = 'Click to choose a file (max 20MB)'; drop.classList.remove('has-file'); return; }
+  if(!f){ pickedFile = null; drop.textContent = t('dm.dropText'); drop.classList.remove('has-file'); return; }
   if(f.size > MAX_FILE_BYTES){
-    alert('That file is over 20MB. Use the Drive/Dropbox link option below instead.');
+    alert(t('docs.fileTooBig'));
     input.value = ''; pickedFile = null;
-    drop.textContent = 'Click to choose a file (max 20MB)'; drop.classList.remove('has-file');
+    drop.textContent = t('dm.dropText'); drop.classList.remove('has-file');
     return;
   }
   pickedFile = f;
@@ -709,7 +902,7 @@ function resetDocForm(){
   document.getElementById('doc-url').value='';
   document.getElementById('doc-desc').value='';
   document.getElementById('doc-file').value='';
-  document.getElementById('file-drop').textContent = 'Click to choose a file (max 20MB)';
+  document.getElementById('file-drop').textContent = t('dm.dropText');
   document.getElementById('file-drop').classList.remove('has-file');
   document.getElementById('progress-wrap').classList.remove('on');
   document.getElementById('progress-fill').style.width = '0%';
@@ -720,8 +913,8 @@ async function addDoc(){
   const title = document.getElementById('doc-title').value.trim();
   let url = document.getElementById('doc-url').value.trim();
   const desc = document.getElementById('doc-desc').value.trim();
-  if(!title){ alert('Give it a title so people know what it is.'); return; }
-  if(!pickedFile && !url){ alert('Upload a file or paste a link.'); return; }
+  if(!title){ alert(t('docs.titleRequired')); return; }
+  if(!pickedFile && !url){ alert(t('docs.needFileOrLink')); return; }
   if(url && !/^https?:\/\//i.test(url)) url = 'https://' + url;
 
   const btn = document.getElementById('doc-submit-btn');
@@ -740,7 +933,7 @@ async function addDoc(){
         task.on('state_changed', snap=>{
           const pct = Math.round(100 * snap.bytesTransferred / snap.totalBytes);
           fill.style.width = pct + '%';
-          label.textContent = `Uploading… ${pct}%`;
+          label.textContent = `${t('dm.uploading')} ${pct}%`;
         }, reject, resolve);
       });
       docRecord.fileURL = await getDownloadURL(task.snapshot.ref);
@@ -751,7 +944,7 @@ async function addDoc(){
       docRecord.url = url || null;
     }catch(e){
       console.error('upload failed', e);
-      alert("That upload didn't go through — check your connection and try again.");
+      alert(t('docs.uploadFail'));
       btn.disabled = false; wrap.classList.remove('on');
       return;
     }
@@ -771,7 +964,7 @@ async function addDoc(){
 async function deleteDoc(id){
   const d = docsCache.find(x=>x.id===id);
   if(!d) return;
-  if(!confirm(`Remove "${d.title}"? This can't be undone.`)) return;
+  if(!confirm(`${t('docs.confirmRemovePrefix')}${d.title}${t('docs.confirmRemoveSuffix')}`)) return;
   if(d.storagePath){
     try{ await deleteObject(storageRef(storage, d.storagePath)); }
     catch(e){ console.error('storage delete failed', e); /* continue removing the record either way */ }
@@ -786,7 +979,7 @@ async function deleteDoc(id){
 function initials(n){ return n.split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
 function renderTeam(){
   const el = document.getElementById('team-list');
-  if(!teamCache.length){ el.innerHTML = '<div class="empty">Nobody\'s signed the roster yet — be first!</div>'; return; }
+  if(!teamCache.length){ el.innerHTML = `<div class="empty">${t('team.empty')}</div>`; return; }
   el.innerHTML = teamCache.map(m=>`
     <div class="member">
       <div class="avatar">${initials(m.name)}</div>
@@ -801,7 +994,7 @@ async function addMember(){
   const name = document.getElementById('tm-name').value.trim();
   const role = document.getElementById('tm-role').value.trim();
   const contact = document.getElementById('tm-contact').value.trim();
-  if(!name){ alert('Name, please!'); return; }
+  if(!name){ alert(t('team.nameRequired')); return; }
   const fresh = await sGet('team', true, []);
   fresh.push({id:Date.now().toString(36), name, role, contact});
   if(await sSet('team', fresh, true)){
@@ -824,35 +1017,37 @@ function renderPoll(){
     if(v.choice==='other' && v.otherText) otherTexts.push(v.otherText);
   });
   const existing = me ? pollCache[normKey(me)] : null;
+  const voteWord = t(total===1 ? 'poll.voteSingular' : 'poll.votePlural');
 
   const resultsHtml = `
-    <div class="muted" style="margin-bottom:12px;font-weight:800">${total} vote${total===1?'':'s'} cast so far</div>
+    <div class="muted" style="margin-bottom:12px;font-weight:800">${total} ${voteWord} ${t('poll.castSoFar')}</div>
     ${POLL_CHOICES.map(c=>{
       const n = counts[c.id]||0;
       const pct = total ? Math.round(100*n/total) : 0;
       return `<div class="poll-option">
-        <div class="poll-label"><span>${esc(c.label)}</span><span>${n} (${pct}%)</span></div>
+        <div class="poll-label"><span>${esc(t(c.key))}</span><span>${n} (${pct}%)</span></div>
         <div class="poll-bar-track"><div class="poll-bar-fill" style="width:${pct}%"></div></div>
       </div>`;
     }).join('')}
-    ${otherTexts.length ? `<details class="poll-other-list"><summary>See "Other" suggestions (${otherTexts.length})</summary><ul>${otherTexts.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></details>` : ''}`;
+    ${otherTexts.length ? `<details class="poll-other-list"><summary>${t('poll.seeOther')} (${otherTexts.length})</summary><ul>${otherTexts.map(ot=>`<li>${esc(ot)}</li>`).join('')}</ul></details>` : ''}`;
 
   let formHtml;
   if(existing){
-    const label = (POLL_CHOICES.find(c=>c.id===existing.choice)||{}).label || existing.choice;
-    formHtml = `<div class="poll-voted-note"><b>✅ You voted for ${esc(label)}</b>${existing.choice==='other' && existing.otherText ? `: “${esc(existing.otherText)}”` : ''}. Thanks for weighing in — one vote per person, so this is locked in.</div>`;
+    const choiceObj = POLL_CHOICES.find(c=>c.id===existing.choice);
+    const label = choiceObj ? t(choiceObj.key) : existing.choice;
+    formHtml = `<div class="poll-voted-note"><b>${t('poll.votedPrefix')} ${esc(label)}</b>${existing.choice==='other' && existing.otherText ? `: “${esc(existing.otherText)}”` : ''}. ${t('poll.votedThanks')}</div>`;
   } else {
     formHtml = `
       <div class="poll-voted-note" style="border-color:var(--shell)">
-        <h3 style="margin-bottom:6px">Cast your vote</h3>
+        <h3 style="margin-bottom:6px">${t('poll.castVote')}</h3>
         ${POLL_CHOICES.map(c=>`
           <label class="poll-radio-row">
             <input type="radio" name="poll-choice" value="${c.id}" onchange="onPollChoiceChange()">
-            <span>${esc(c.label)}</span>
+            <span>${esc(t(c.key))}</span>
           </label>`).join('')}
-        <input id="poll-other-text" class="poll-other-input" style="display:none" placeholder="Tell us where…">
+        <input id="poll-other-text" class="poll-other-input" style="display:none" placeholder="${t('poll.otherPh')}">
         <div class="actions" style="margin-top:14px;justify-content:flex-start">
-          <button class="btn green" onclick="castVote()">Cast your vote</button>
+          <button class="btn green" onclick="castVote()">${t('poll.castVote')}</button>
         </div>
       </div>`;
   }
@@ -866,17 +1061,17 @@ function onPollChoiceChange(){
 async function castVote(){
   if(needName()) return;
   const key = normKey(me);
-  if(pollCache[key]){ alert("Looks like you've already voted."); renderPoll(); return; }
+  if(pollCache[key]){ alert(t('poll.alreadyVoted')); renderPoll(); return; }
   const sel = document.querySelector('input[name="poll-choice"]:checked');
-  if(!sel){ alert('Pick an option first.'); return; }
+  if(!sel){ alert(t('poll.pickFirst')); return; }
   const choice = sel.value;
   let otherText = '';
   if(choice==='other'){
     otherText = document.getElementById('poll-other-text').value.trim();
-    if(!otherText){ alert('Let us know what "Other" means to you.'); return; }
+    if(!otherText){ alert(t('poll.otherRequired')); return; }
   }
   const fresh = await sGet('poll-votes', true, {});
-  if(fresh[key]){ pollCache = fresh; alert("Looks like you've already voted."); renderPoll(); return; }
+  if(fresh[key]){ pollCache = fresh; alert(t('poll.alreadyVoted')); renderPoll(); return; }
   fresh[key] = {choice, otherText, name: me, ts: Date.now()};
   if(await sSet('poll-votes', fresh, true)){
     pollCache = fresh;
@@ -887,15 +1082,15 @@ async function castVote(){
 /* ================= activity ================= */
 function renderActivity(){
   const items = [];
-  CHANNELS.forEach(c=>(threadsCache[c.id]||[]).forEach(t=>{
-    items.push({ts:t.ts, html:`💬 <b>${esc(t.author)}</b> started “${esc(t.title)}”`});
-    (t.replies||[]).forEach(r=>items.push({ts:r.ts, html:`↩️ <b>${esc(r.author)}</b> replied in “${esc(t.title)}”`}));
+  CHANNELS.forEach(c=>(threadsCache[c.id]||[]).forEach(th=>{
+    items.push({ts:th.ts, html:`💬 <b>${esc(th.author)}</b> ${t('activity.started')} “${esc(th.title)}”`});
+    (th.replies||[]).forEach(r=>items.push({ts:r.ts, html:`↩️ <b>${esc(r.author)}</b> ${t('activity.repliedIn')} “${esc(th.title)}”`}));
   }));
-  docsCache.forEach(d=>items.push({ts:d.ts, html:`📁 <b>${esc(d.addedBy)}</b> added “${esc(d.title)}”`}));
-  Object.values(pollCache).forEach(v=>items.push({ts:v.ts, html:`🗳️ <b>${esc(v.name||'Someone')}</b> voted in the charity poll`}));
+  docsCache.forEach(d=>items.push({ts:d.ts, html:`📁 <b>${esc(d.addedBy)}</b> ${t('activity.added')} “${esc(d.title)}”`}));
+  Object.values(pollCache).forEach(v=>items.push({ts:v.ts, html:`🗳️ <b>${esc(v.name||t('activity.someone'))}</b> ${t('activity.votedPoll')}`}));
   items.sort((a,b)=>b.ts-a.ts);
   const el = document.getElementById('activity');
-  if(!items.length){ el.innerHTML = '<li class="empty">Quiet so far. Start a thread or add a document to get things moving.</li>'; return; }
+  if(!items.length){ el.innerHTML = `<li class="empty">${t('activity.empty')}</li>`; return; }
   el.innerHTML = items.slice(0,5).map(i=>`<li><span>${i.html}</span><span class="when">${ago(i.ts)}</span></li>`).join('');
 }
 
@@ -903,5 +1098,5 @@ function renderActivity(){
 Object.assign(window, { tryUnlock, showTab, openModal, closeModal, saveName, editRaised,
   pickChan, openThreadModal, createThread, toggleThread, reply,
   pickFolder, addDoc, addMember, onFilePicked, deleteDoc, resetDocForm,
-  onPollChoiceChange, castVote });
+  onPollChoiceChange, castVote, setLang });
 </script>
