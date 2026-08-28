@@ -107,6 +107,12 @@
   .reply{margin-left:22px}
   .composer textarea,.composer input{width:100%;border:2px solid var(--shell);border-radius:12px;padding:10px 12px;outline:none;resize:vertical;margin-bottom:8px}
   .composer textarea:focus,.composer input:focus{border-color:var(--acorn)}
+  .composer-attach-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+  .attach-label{font-weight:700;font-size:13px;color:var(--leaf-deep)}
+  .post-attach{margin-top:6px;display:flex;align-items:center;gap:6px;font-size:13.5px}
+  .post-attach a{font-weight:700}
+  .inline-del{background:transparent;border:none;color:var(--ink-soft);font-size:12px;font-weight:800;text-decoration:underline;cursor:pointer;padding:0}
+  .inline-del:hover{color:var(--rust)}
 
   /* ---------- documents ---------- */
   .folder-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
@@ -259,7 +265,7 @@
 
       <div class="card">
         <h2 data-i18n="dash.storyHeading">The Story Behind NUTS!</h2>
-        <p style="margin-top:8px" data-i18n="dash.storyCapstone">This project is also serving as my capstone for an MIT Executive Education course, <b>Applied Agentic AI for Organizational Transformation</b>.</p>
+        <p style="margin-top:8px" data-i18n="dash.storyCapstone">This project is also serving as my capstone for an MIT Executive Education course, Applied Agentic AI for Organizational Transformation. I'm using the course and capstone project as a ground-up development of a new business — covering research, product design and placement, operations management, marketing, finance, and KPI development, alongside the use of AI agents and technology to build this site and all the materials in it. It's been a fun and informative project that's taught me a great deal about the practical functionality of advanced AI systems. I thought it would also be great if it had a philanthropic purpose — hence the game and its small philanthropic goal.</p>
         <p style="margin-top:10px" data-i18n-html="dash.storyOrigin">Nearly thirty years ago, a retired Marine Corps Colonel told me the story of Brigadier General Anthony McAuliffe, who commanded the besieged 101st Airborne Division at Bastogne during the Battle of the Bulge. When German forces demanded his surrender in December 1944, McAuliffe's entire reply was a single word: &ldquo;Nuts!&rdquo; The 101st held the line — and the story stuck with me ever since as a lesson in never giving up, which is exactly why it felt like the right name for this project. <a href="https://militaryhistorynow.com/2020/09/15/nuts-the-story-of-the-famous-american-reply-to-the-german-surrender-ultimatum-at-bastogne/" target="_blank" rel="noopener">Read the full story of Bastogne →</a></p>
         <p style="margin-top:10px" data-i18n="dash.storyLegal">NUTS! is organized as a Florida LLC. All costs for this initial run are being covered personally — anyone who'd like to contribute their time, ideas, or simply purchase a unit for themselves is very welcome to. The first production run is limited to 50 units, and if the project turns a profit, all of it goes to charity (see the Poll tab to help choose which one). The legal entity will remain in place after this initial run concludes and may be repurposed for future projects.</p>
       </div>
@@ -352,9 +358,12 @@
     <input id="th-title" data-i18n-ph="thm.titlePh" placeholder="What's this about?">
     <label for="th-body" data-i18n="thm.bodyLabel">First post</label>
     <textarea id="th-body" rows="4" data-i18n-ph="thm.bodyPh" placeholder="Kick off the conversation…"></textarea>
+    <label for="th-file" style="margin-top:12px" data-i18n="thm.attachLabel">Attach a file (optional)</label>
+    <div class="file-drop" id="th-file-drop" onclick="document.getElementById('th-file').click()" data-i18n="dm.dropText">Click to choose a file (max 20MB)</div>
+    <input id="th-file" type="file" style="display:none" onchange="onThreadFilePicked()">
     <div class="actions">
-      <button class="btn ghost" onclick="closeModal('thread-modal')" data-i18n="common.cancel">Cancel</button>
-      <button class="btn green" onclick="createThread()" data-i18n="thm.post">Post thread</button>
+      <button class="btn ghost" onclick="resetThreadForm(); closeModal('thread-modal')" data-i18n="common.cancel">Cancel</button>
+      <button class="btn green" onclick="createThread()" id="th-submit-btn" data-i18n="thm.post">Post thread</button>
     </div>
   </div>
 </div>
@@ -459,7 +468,7 @@ const I18N = {
     "dash.launchPill":"Launch target","dash.launchTitle":"Thanksgiving 2026","dash.missionPill":"Mission",
     "dash.missionShort":"We're building a children's game, selling a limited run, and giving the profits to charity. Full mission statement coming soon — see the About tab.",
     "dash.storyHeading":"The Story Behind NUTS!",
-    "dash.storyCapstone":"This project is also serving as my capstone for an MIT Executive Education course, <b>Applied Agentic AI for Organizational Transformation</b>.",
+    "dash.storyCapstone":"This project is also serving as my capstone for an MIT Executive Education course, Applied Agentic AI for Organizational Transformation. I'm using the course and capstone project as a ground-up development of a new business — covering research, product design and placement, operations management, marketing, finance, and KPI development, alongside the use of AI agents and technology to build this site and all the materials in it. It's been a fun and informative project that's taught me a great deal about the practical functionality of advanced AI systems. I thought it would also be great if it had a philanthropic purpose — hence the game and its small philanthropic goal.",
     "dash.storyOrigin":"Nearly thirty years ago, a retired Marine Corps Colonel told me the story of Brigadier General Anthony McAuliffe, who commanded the besieged 101st Airborne Division at Bastogne during the Battle of the Bulge. When German forces demanded his surrender in December 1944, McAuliffe's entire reply was a single word: \u201CNuts!\u201D The 101st held the line — and the story stuck with me ever since as a lesson in never giving up, which is exactly why it felt like the right name for this project. <a href=\"https://militaryhistorynow.com/2020/09/15/nuts-the-story-of-the-famous-american-reply-to-the-german-surrender-ultimatum-at-bastogne/\" target=\"_blank\" rel=\"noopener\">Read the full story of Bastogne →</a>",
     "dash.storyLegal":"NUTS! is organized as a Florida LLC. All costs for this initial run are being covered personally — anyone who'd like to contribute their time, ideas, or simply purchase a unit for themselves is very welcome to. The first production run is limited to 50 units, and if the project turns a profit, all of it goes to charity (see the Poll tab to help choose which one). The legal entity will remain in place after this initial run concludes and may be repurposed for future projects.",
     "dash.activityHeading":"Latest activity",
@@ -496,6 +505,10 @@ const I18N = {
     "nm.label":"Your name","nm.ph":"e.g. Sam R.","nm.btn":"That's me",
     "thm.title":"New thread","thm.channelLabel":"Channel","thm.titleLabel":"Title","thm.titlePh":"What's this about?",
     "thm.bodyLabel":"First post","thm.bodyPh":"Kick off the conversation…","thm.post":"Post thread","common.cancel":"Cancel",
+    "thm.attachLabel":"Attach a file (optional)",
+    "disc.attachBtn":"📎 Attach","disc.deleteBtn":"Delete",
+    "disc.deleteThreadConfirm":"Delete this thread and all its replies? This can't be undone.",
+    "disc.deleteReplyConfirm":"Delete this reply? This can't be undone.",
     "dm.title":"Add a document","dm.folderLabel":"Folder","dm.titleLabel":"Title","dm.titlePh":"e.g. Game rules draft v2",
     "dm.uploadLabel":"Upload a file","dm.dropText":"Click to choose a file (max 20MB)","dm.uploading":"Uploading…","dm.or":"or",
     "dm.linkLabel":"Link (Google Drive, Dropbox, etc.)","dm.linkPh":"https://…  (use this for very large files)",
@@ -528,7 +541,7 @@ const I18N = {
     "dash.launchPill":"Meta de lançamento","dash.launchTitle":"Ação de Graças de 2026","dash.missionPill":"Missão",
     "dash.missionShort":"Estamos criando um jogo infantil, vendendo uma edição limitada e doando os lucros para caridade. Missão completa em breve — veja a aba Sobre.",
     "dash.storyHeading":"A História por Trás do NUTS!",
-    "dash.storyCapstone":"Este projeto também é meu projeto final (capstone) de um curso de Educação Executiva do MIT, <b>Applied Agentic AI for Organizational Transformation</b>.",
+    "dash.storyCapstone":"Este projeto também é meu projeto final (capstone) de um curso de Educação Executiva do MIT, Applied Agentic AI for Organizational Transformation. Estou usando o curso e o projeto final como o desenvolvimento completo, do zero, de um novo negócio — abrangendo pesquisa, design e posicionamento de produto, gestão de operações, marketing, finanças e desenvolvimento de KPIs, além do uso de agentes de IA e tecnologia para construir este site e todos os materiais nele contidos. Tem sido um projeto divertido e muito instrutivo, que me ensinou bastante sobre a funcionalidade prática de sistemas avançados de IA. Também achei que seria ótimo se ele tivesse um propósito filantrópico — daí a criação do jogo e sua pequena meta filantrópica.",
     "dash.storyOrigin":"Há quase trinta anos, um Coronel aposentado do Corpo de Fuzileiros Navais dos EUA me contou a história do Brigadeiro-General Anthony McAuliffe, que comandava a cercada 101ª Divisão Aerotransportada em Bastogne durante a Batalha das Ardenas. Quando as forças alemãs exigiram sua rendição em dezembro de 1944, a resposta de McAuliffe foi uma única palavra: \u201CNuts!\u201D (algo como \u201CNada disso!\u201D). A 101ª segurou a linha — e essa história ficou comigo desde então como uma lição de nunca desistir, e foi exatamente por isso que pareceu o nome certo para este projeto. <a href=\"https://militaryhistorynow.com/2020/09/15/nuts-the-story-of-the-famous-american-reply-to-the-german-surrender-ultimatum-at-bastogne/\" target=\"_blank\" rel=\"noopener\">Leia a história completa de Bastogne →</a>",
     "dash.storyLegal":"O NUTS! está organizado como uma LLC (sociedade limitada) da Flórida. Todos os custos desta primeira produção estão sendo cobertos pessoalmente — qualquer pessoa que queira contribuir com tempo, ideias ou simplesmente comprar uma unidade para si é muito bem-vinda. A primeira produção é limitada a 50 unidades e, se o projeto gerar lucro, tudo será destinado à caridade (veja a aba Enquete para ajudar a escolher qual). A entidade legal continuará existindo após a conclusão desta primeira etapa e poderá ser reaproveitada em projetos futuros.",
     "dash.activityHeading":"Atividade recente",
@@ -565,6 +578,10 @@ const I18N = {
     "nm.label":"Seu nome","nm.ph":"ex.: Sam R.","nm.btn":"Sou eu",
     "thm.title":"Novo tópico","thm.channelLabel":"Canal","thm.titleLabel":"Título","thm.titlePh":"Sobre o que é isso?",
     "thm.bodyLabel":"Primeira postagem","thm.bodyPh":"Comece a conversa…","thm.post":"Publicar tópico","common.cancel":"Cancelar",
+    "thm.attachLabel":"Anexar um arquivo (opcional)",
+    "disc.attachBtn":"📎 Anexar","disc.deleteBtn":"Excluir",
+    "disc.deleteThreadConfirm":"Excluir este tópico e todas as respostas? Isso não pode ser desfeito.",
+    "disc.deleteReplyConfirm":"Excluir esta resposta? Isso não pode ser desfeito.",
     "dm.title":"Adicionar um documento","dm.folderLabel":"Pasta","dm.titleLabel":"Título","dm.titlePh":"ex.: Rascunho das regras v2",
     "dm.uploadLabel":"Enviar um arquivo","dm.dropText":"Clique para escolher um arquivo (máx. 20MB)","dm.uploading":"Enviando…","dm.or":"ou",
     "dm.linkLabel":"Link (Google Drive, Dropbox, etc.)","dm.linkPh":"https://…  (use para arquivos muito grandes)",
@@ -625,6 +642,8 @@ let curFolder = 'design';
 let threadsCache = {}, docsCache = [], teamCache = [], settingsCache = {raised:0};
 let pollCache = {};
 let pickedFile = null;
+let pendingThreadFile = null;
+let pendingReplyFiles = {};
 
 function fmtBytes(n){
   if(n < 1024) return n + ' B';
@@ -640,6 +659,18 @@ function iconFor(name, contentType){
   if(['ppt','pptx'].includes(ext)) return '📙';
   if(['zip','rar','7z'].includes(ext)) return '🗜️';
   return '📄';
+}
+async function uploadAttachment(file, pathPrefix){
+  const path = `${pathPrefix}/${Date.now().toString(36)}-${file.name}`;
+  const sref = storageRef(storage, path);
+  const task = uploadBytesResumable(sref, file, {contentType: file.type || 'application/octet-stream'});
+  await new Promise((resolve, reject)=>{ task.on('state_changed', ()=>{}, reject, resolve); });
+  const url = await getDownloadURL(task.snapshot.ref);
+  return {fileURL:url, storagePath:path, fileName:file.name, fileSize:file.size, contentType:file.type||''};
+}
+function attachmentChip(att){
+  if(!att) return '';
+  return `<div class="post-attach"><a href="${esc(att.fileURL)}" target="_blank" rel="noopener">${iconFor(att.fileName,att.contentType)} ${esc(att.fileName)}</a><span class="filesize-pill">${fmtBytes(att.fileSize||0)}</span></div>`;
 }
 
 /* ================= storage helpers (Firestore) ================= */
@@ -802,6 +833,7 @@ function renderThreads(){
   el.innerHTML = list.slice().sort((a,b)=>b.ts-a.ts).map(th=>{
     const count = 1+(th.replies?.length||0);
     const postWord = t(count===1 ? 'disc.postSingular' : 'disc.postPlural');
+    const canDeleteThread = !!me && th.author===me;
     return `
     <div class="thread" id="t-${th.id}">
       <div class="thread-head" onclick="toggleThread('${th.id}')">
@@ -809,47 +841,156 @@ function renderThreads(){
         <span class="pill">${count} ${postWord}</span>
       </div>
       <div class="thread-body">
-        <div class="post"><div class="meta">${esc(th.author)} · ${ago(th.ts)}</div>${esc(th.body)}</div>
-        ${(th.replies||[]).map(r=>`<div class="post reply"><div class="meta">${esc(r.author)} · ${ago(r.ts)}</div>${esc(r.body)}</div>`).join('')}
+        <div class="post">
+          <div class="meta">${esc(th.author)} · ${ago(th.ts)}${canDeleteThread ? ` · <button class="inline-del" onclick="event.stopPropagation(); deleteThread('${th.id}')">${t('disc.deleteBtn')}</button>` : ''}</div>
+          ${esc(th.body)}
+          ${attachmentChip(th.attachment)}
+        </div>
+        ${(th.replies||[]).map(r=>{
+          const canDeleteReply = !!me && r.author===me;
+          return `<div class="post reply">
+            <div class="meta">${esc(r.author)} · ${ago(r.ts)}${canDeleteReply ? ` · <button class="inline-del" onclick="deleteReply('${th.id}', ${r.ts})">${t('disc.deleteBtn')}</button>` : ''}</div>
+            ${esc(r.body)}
+            ${attachmentChip(r.attachment)}
+          </div>`;
+        }).join('')}
         <div class="composer">
           <textarea id="re-${th.id}" rows="2" placeholder="${t('disc.replyPh')}"></textarea>
-          <button class="btn green small" onclick="reply('${th.id}')">${t('disc.replyBtn')}</button>
+          <div class="composer-attach-row">
+            <button type="button" class="btn ghost small" onclick="document.getElementById('re-file-${th.id}').click()">${t('disc.attachBtn')}</button>
+            <span class="attach-label" id="re-file-label-${th.id}"></span>
+            <input id="re-file-${th.id}" type="file" style="display:none" onchange="onReplyFilePicked('${th.id}')">
+          </div>
+          <button class="btn green small" onclick="reply('${th.id}')" id="re-btn-${th.id}">${t('disc.replyBtn')}</button>
         </div>
       </div>
     </div>`;
   }).join('');
 }
 function toggleThread(id){ document.getElementById('t-'+id).classList.toggle('open'); }
+function resetThreadForm(){
+  pendingThreadFile = null;
+  const input = document.getElementById('th-file'); if(input) input.value='';
+  const drop = document.getElementById('th-file-drop');
+  if(drop){ drop.textContent = t('dm.dropText'); drop.classList.remove('has-file'); }
+}
 function openThreadModal(){
   if(needName()) return;
   document.getElementById('th-chan').value = curChan;
   document.getElementById('th-title').value=''; document.getElementById('th-body').value='';
+  resetThreadForm();
   openModal('thread-modal');
+}
+function onThreadFilePicked(){
+  const input = document.getElementById('th-file');
+  const f = input.files && input.files[0];
+  const drop = document.getElementById('th-file-drop');
+  if(!f){ pendingThreadFile = null; drop.textContent = t('dm.dropText'); drop.classList.remove('has-file'); return; }
+  if(f.size > MAX_FILE_BYTES){
+    alert(t('docs.fileTooBig'));
+    input.value = ''; pendingThreadFile = null;
+    drop.textContent = t('dm.dropText'); drop.classList.remove('has-file');
+    return;
+  }
+  pendingThreadFile = f;
+  drop.textContent = `${iconFor(f.name, f.type)} ${f.name} (${fmtBytes(f.size)})`;
+  drop.classList.add('has-file');
+}
+function onReplyFilePicked(tid){
+  const input = document.getElementById('re-file-'+tid);
+  const f = input.files && input.files[0];
+  const label = document.getElementById('re-file-label-'+tid);
+  if(!f){ delete pendingReplyFiles[tid]; if(label) label.textContent = ''; return; }
+  if(f.size > MAX_FILE_BYTES){
+    alert(t('docs.fileTooBig'));
+    input.value = ''; delete pendingReplyFiles[tid];
+    if(label) label.textContent = '';
+    return;
+  }
+  pendingReplyFiles[tid] = f;
+  if(label) label.textContent = `${iconFor(f.name, f.type)} ${f.name} (${fmtBytes(f.size)})`;
 }
 async function createThread(){
   const chan = document.getElementById('th-chan').value;
   const title = document.getElementById('th-title').value.trim();
   const body = document.getElementById('th-body').value.trim();
   if(!title || !body){ alert(t('disc.titleAndBody')); return; }
+  const btn = document.getElementById('th-submit-btn');
+  if(btn) btn.disabled = true;
+  let attachment = null;
+  if(pendingThreadFile){
+    try{ attachment = await uploadAttachment(pendingThreadFile, `threads/${chan}`); }
+    catch(e){ console.error('thread attachment upload failed', e); alert(t('docs.uploadFail')); if(btn) btn.disabled=false; return; }
+  }
   const fresh = await sGet('threads-'+chan, true, []);
-  fresh.push({id:Date.now().toString(36), title, body, author:me, ts:Date.now(), replies:[]});
+  const rec = {id:Date.now().toString(36), title, body, author:me, ts:Date.now(), replies:[]};
+  if(attachment) rec.attachment = attachment;
+  fresh.push(rec);
   if(await sSet('threads-'+chan, fresh, true)){
     threadsCache[chan]=fresh; curChan=chan;
+    resetThreadForm();
     closeModal('thread-modal'); buildChanTabs(); renderThreads(); renderActivity();
   }
+  if(btn) btn.disabled = false;
 }
 async function reply(tid){
   if(needName()) return;
   const box = document.getElementById('re-'+tid);
   const body = box.value.trim();
-  if(!body) return;
+  const file = pendingReplyFiles[tid];
+  if(!body && !file) return;
+  const btn = document.getElementById('re-btn-'+tid);
+  if(btn) btn.disabled = true;
+  let attachment = null;
+  if(file){
+    try{ attachment = await uploadAttachment(file, `threads/${curChan}/replies`); }
+    catch(e){ console.error('reply attachment upload failed', e); alert(t('docs.uploadFail')); if(btn) btn.disabled=false; return; }
+  }
   const fresh = await sGet('threads-'+curChan, true, []);
   const th = fresh.find(x=>x.id===tid);
   if(!th){ alert(t('disc.threadMoved')); refreshAll(); return; }
-  (th.replies = th.replies||[]).push({author:me, body, ts:Date.now()});
+  const rec = {author:me, body, ts:Date.now()};
+  if(attachment) rec.attachment = attachment;
+  (th.replies = th.replies||[]).push(rec);
   if(await sSet('threads-'+curChan, fresh, true)){
-    threadsCache[curChan]=fresh; renderThreads();
+    threadsCache[curChan]=fresh;
+    delete pendingReplyFiles[tid];
+    renderThreads();
     document.getElementById('t-'+tid).classList.add('open');
+  }
+  if(btn) btn.disabled = false;
+}
+async function deleteThread(tid){
+  const fresh = await sGet('threads-'+curChan, true, []);
+  const th = fresh.find(x=>x.id===tid);
+  if(!th || th.author !== me) return;
+  if(!confirm(t('disc.deleteThreadConfirm'))) return;
+  const paths = [];
+  if(th.attachment && th.attachment.storagePath) paths.push(th.attachment.storagePath);
+  (th.replies||[]).forEach(r=>{ if(r.attachment && r.attachment.storagePath) paths.push(r.attachment.storagePath); });
+  for(const p of paths){ try{ await deleteObject(storageRef(storage, p)); }catch(e){ console.error('attachment delete failed', e); } }
+  const updated = fresh.filter(x=>x.id!==tid);
+  if(await sSet('threads-'+curChan, updated, true)){
+    threadsCache[curChan] = updated;
+    renderThreads(); renderActivity();
+  }
+}
+async function deleteReply(tid, replyTs){
+  const fresh = await sGet('threads-'+curChan, true, []);
+  const th = fresh.find(x=>x.id===tid);
+  if(!th) return;
+  const r = (th.replies||[]).find(x=>x.ts===replyTs);
+  if(!r || r.author !== me) return;
+  if(!confirm(t('disc.deleteReplyConfirm'))) return;
+  if(r.attachment && r.attachment.storagePath){
+    try{ await deleteObject(storageRef(storage, r.attachment.storagePath)); }catch(e){ console.error('attachment delete failed', e); }
+  }
+  th.replies = (th.replies||[]).filter(x=>x.ts!==replyTs);
+  if(await sSet('threads-'+curChan, fresh, true)){
+    threadsCache[curChan] = fresh;
+    renderThreads();
+    const el = document.getElementById('t-'+tid);
+    if(el) el.classList.add('open');
   }
 }
 
@@ -1096,7 +1237,8 @@ function renderActivity(){
 
 /* ================= expose handlers for inline onclick ================= */
 Object.assign(window, { tryUnlock, showTab, openModal, closeModal, saveName, editRaised,
-  pickChan, openThreadModal, createThread, toggleThread, reply,
+  pickChan, openThreadModal, createThread, toggleThread, reply, resetThreadForm,
+  onThreadFilePicked, onReplyFilePicked, deleteThread, deleteReply,
   pickFolder, addDoc, addMember, onFilePicked, deleteDoc, resetDocForm,
   onPollChoiceChange, castVote, setLang });
 </script>
