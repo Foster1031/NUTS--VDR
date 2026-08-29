@@ -125,6 +125,10 @@
   .composer-attach-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
   .attach-label{font-weight:700;font-size:13px;color:var(--leaf-deep)}
   .post-attach{margin-top:6px;display:flex;align-items:center;gap:6px;font-size:13.5px}
+  .translate-link{background:transparent;border:none;color:var(--leaf-deep);font-size:12px;font-weight:800;text-decoration:underline;cursor:pointer;padding:0;margin-top:5px;display:inline-block}
+  .translate-link:hover{color:var(--acorn-deep)}
+  .translate-link:disabled{opacity:.6;cursor:default;text-decoration:none}
+  .translated-text{margin-top:6px;padding:8px 10px;background:var(--card);border-left:3px solid var(--acorn);border-radius:0 8px 8px 0;font-size:14px;font-style:italic;overflow-wrap:anywhere}
   .post-attach a{font-weight:700}
   .inline-del{background:transparent;border:none;color:var(--ink-soft);font-size:12px;font-weight:800;text-decoration:underline;cursor:pointer;padding:0}
   .inline-del:hover{color:var(--rust)}
@@ -437,7 +441,7 @@
       </div>
       <div class="card">
         <h2 data-i18n="about.companyHeading">The company</h2>
-        <p data-i18n="about.companyLine1"><b>NUTS! LLC</b> · Florida limited liability company · Effective August 26, 2026</p>
+        <p data-i18n-html="about.companyLine1"><b>NUTS! LLC</b> · Florida limited liability company · Effective August 26, 2026</p>
         <p class="muted" style="margin-top:6px" data-i18n="about.companyLine2">All costs for the initial 50-unit run are covered personally. Vote for the charity partner in the Poll tab — every dollar of profit, if any, goes to whichever cause wins.</p>
       </div>
       <div class="card">
@@ -641,6 +645,9 @@ const I18N = {
     "thm.bodyLabel":"First post","thm.bodyPh":"Kick off the conversation…","thm.post":"Post thread","common.cancel":"Cancel",
     "thm.attachLabel":"Attach a file (optional)",
     "disc.attachBtn":"📎 Attach","disc.deleteBtn":"Delete","disc.youTag":"You",
+    "disc.translateBtn":"🌐 Translate","disc.showOriginal":"Show original","disc.translating":"Translating…",
+    "disc.translateFail":"Translation failed — check your connection and try again.",
+    "disc.translateNotConfigured":"Translation isn't set up yet — ask the site admin to add a Translation API key.",
     "disc.deleteThreadConfirm":"Delete this thread and all its replies? This can't be undone.",
     "disc.deleteReplyConfirm":"Delete this reply? This can't be undone.",
     "dm.title":"Add a document","dm.folderLabel":"Folder","dm.titleLabel":"Title","dm.titlePh":"e.g. Game rules draft v2",
@@ -719,6 +726,9 @@ const I18N = {
     "thm.bodyLabel":"Primeira postagem","thm.bodyPh":"Comece a conversa…","thm.post":"Publicar tópico","common.cancel":"Cancelar",
     "thm.attachLabel":"Anexar um arquivo (opcional)",
     "disc.attachBtn":"📎 Anexar","disc.deleteBtn":"Excluir","disc.youTag":"Você",
+    "disc.translateBtn":"🌐 Traduzir","disc.showOriginal":"Ver original","disc.translating":"Traduzindo…",
+    "disc.translateFail":"A tradução falhou — verifique sua conexão e tente novamente.",
+    "disc.translateNotConfigured":"A tradução ainda não foi configurada — peça ao administrador do site para adicionar uma chave da API de Tradução.",
     "disc.deleteThreadConfirm":"Excluir este tópico e todas as respostas? Isso não pode ser desfeito.",
     "disc.deleteReplyConfirm":"Excluir esta resposta? Isso não pode ser desfeito.",
     "dm.title":"Adicionar um documento","dm.folderLabel":"Pasta","dm.titleLabel":"Título","dm.titlePh":"ex.: Rascunho das regras v2",
@@ -801,6 +811,9 @@ const I18N = {
     "thm.bodyPh":"Inicia la conversación…","thm.post":"Publicar tema",
     "common.cancel":"Cancelar","thm.attachLabel":"Adjuntar un archivo (opcional)",
     "disc.attachBtn":"📎 Adjuntar","disc.deleteBtn":"Eliminar",
+    "disc.translateBtn":"🌐 Traducir","disc.showOriginal":"Ver original","disc.translating":"Traduciendo…",
+    "disc.translateFail":"La traducción falló — revisa tu conexión e inténtalo de nuevo.",
+    "disc.translateNotConfigured":"La traducción aún no está configurada — pide al administrador del sitio que agregue una clave de API de Traducción.",
     "disc.youTag":"Tú","disc.deleteThreadConfirm":"¿Eliminar este tema y todas sus respuestas? Esto no se puede deshacer.",
     "disc.deleteReplyConfirm":"¿Eliminar esta respuesta? Esto no se puede deshacer.","dm.title":"Agregar un documento",
     "dm.folderLabel":"Carpeta","dm.titleLabel":"Título",
@@ -884,6 +897,9 @@ const I18N = {
     "thm.bodyPh":"Zacznij rozmowę…","thm.post":"Opublikuj wątek",
     "common.cancel":"Anuluj","thm.attachLabel":"Załącz plik (opcjonalnie)",
     "disc.attachBtn":"📎 Załącz","disc.deleteBtn":"Usuń",
+    "disc.translateBtn":"🌐 Przetłumacz","disc.showOriginal":"Pokaż oryginał","disc.translating":"Tłumaczenie…",
+    "disc.translateFail":"Tłumaczenie nie powiodło się — sprawdź połączenie i spróbuj ponownie.",
+    "disc.translateNotConfigured":"Tłumaczenie nie zostało jeszcze skonfigurowane — poproś administratora strony o dodanie klucza API tłumaczenia.",
     "disc.youTag":"Ty","disc.deleteThreadConfirm":"Usunąć ten wątek wraz ze wszystkimi odpowiedziami? Tego nie można cofnąć.",
     "disc.deleteReplyConfirm":"Usunąć tę odpowiedź? Tego nie można cofnąć.","dm.title":"Dodaj dokument",
     "dm.folderLabel":"Folder","dm.titleLabel":"Tytuł",
@@ -920,6 +936,7 @@ function t(key){
 const CODE = 'ROCHAMBEAU';
 const GOAL = 500;
 const PLANNED_RUN = 50;
+const TRANSLATE_API_KEY = ''; // fill in with a Google Cloud Translation API key restricted to this site's domain
 const LAUNCH = new Date('2026-11-26T00:00:00');
 const CHANNELS = [
   {id:'general', ic:'🌰', key:'chan.general'},
@@ -947,6 +964,7 @@ let curChan = 'general';
 let curFolder = 'design';
 let threadsCache = {}, docsCache = [], teamCache = [], settingsCache = {raised:0, unitsProduced:0, unitsShipped:0, unitsSold:0};
 let pollCache = {};
+let translationState = {}; // key -> {show, text, lang, loading}
 let pickedFile = null;
 let pendingThreadFile = null;
 let pendingReplyFiles = {};
@@ -1016,6 +1034,7 @@ function applyLang(lang){
 async function setLang(lang){
   applyLang(lang);
   await sSet('lang', currentLang, false);
+  translationState = {};
   buildChanTabs(); buildFolderTabs(); fillSelects();
   renderThreads(); renderDocs(); renderTeam(); renderPoll(); renderActivity(); renderGoal(); renderKPIs();
   updateCountdown();
@@ -1172,6 +1191,57 @@ function ago(ts){
   if(s<86400) return Math.floor(s/3600)+t('ago.hAgo');
   return new Date(ts).toLocaleDateString(LOCALE_MAP[currentLang] || 'en', {month:'short',day:'numeric'});
 }
+function trKey(threadId, replyTs){ return replyTs ? threadId+':'+replyTs : threadId; }
+async function callTranslateAPI(text, targetLang){
+  const resp = await fetch(`https://translation.googleapis.com/language/translate/v2?key=${TRANSLATE_API_KEY}`, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ q: text, target: targetLang, format: 'text' })
+  });
+  if(!resp.ok) throw new Error('translate request failed: ' + resp.status);
+  const data = await resp.json();
+  const translated = data && data.data && data.data.translations && data.data.translations[0] && data.data.translations[0].translatedText;
+  if(!translated) throw new Error('no translation returned');
+  return translated;
+}
+async function translatePost(threadId, replyTs){
+  const key = trKey(threadId, replyTs);
+  const existing = translationState[key];
+  if(existing && existing.lang === currentLang && !existing.loading){
+    existing.show = !existing.show;
+    renderThreads();
+    return;
+  }
+  if(!TRANSLATE_API_KEY){ alert(t('disc.translateNotConfigured')); return; }
+  const list = threadsCache[curChan] || [];
+  const th = list.find(x=>x.id===threadId);
+  if(!th) return;
+  const original = replyTs ? ((th.replies||[]).find(r=>r.ts===replyTs) || {}).body : th.body;
+  if(!original) return;
+  translationState[key] = { show:true, text:t('disc.translating'), lang:currentLang, loading:true };
+  renderThreads();
+  try{
+    const translated = await callTranslateAPI(original, currentLang);
+    translationState[key] = { show:true, text:translated, lang:currentLang, loading:false };
+  }catch(e){
+    console.error('translation failed', e);
+    delete translationState[key];
+    alert(t('disc.translateFail'));
+  }
+  renderThreads();
+}
+function translateWidget(key){
+  const st = translationState[key];
+  if(st && st.show){
+    if(st.loading) return `<div class="translated-text">🌐 ${esc(st.text)}</div>`;
+    return `<div class="translated-text">🌐 ${esc(st.text)}</div><button class="translate-link" onclick="translatePost(${keyArgs(key)})">${t('disc.showOriginal')}</button>`;
+  }
+  return `<button class="translate-link" onclick="translatePost(${keyArgs(key)})">${t('disc.translateBtn')}</button>`;
+}
+function keyArgs(key){
+  const parts = key.split(':');
+  return parts.length>1 ? `'${parts[0]}', ${parts[1]}` : `'${parts[0]}'`;
+}
 function renderThreads(){
   const list = threadsCache[curChan] || [];
   const el = document.getElementById('thread-list');
@@ -1192,6 +1262,7 @@ function renderThreads(){
           <div class="post-content">
             <div class="meta"><span class="post-author">${esc(th.author)}</span>${(!!me && th.author===me) ? `<span class="post-you">${t('disc.youTag')}</span>` : ''} · ${ago(th.ts)}${canDeleteThread ? ` · <button class="inline-del" onclick="event.stopPropagation(); deleteThread('${th.id}')">${t('disc.deleteBtn')}</button>` : ''}</div>
             <div class="post-body">${esc(th.body)}</div>
+            ${translateWidget(trKey(th.id))}
             ${attachmentChip(th.attachment)}
           </div>
         </div>
@@ -1202,6 +1273,7 @@ function renderThreads(){
             <div class="post-content">
               <div class="meta"><span class="post-author">${esc(r.author)}</span>${(!!me && r.author===me) ? `<span class="post-you">${t('disc.youTag')}</span>` : ''} · ${ago(r.ts)}${canDeleteReply ? ` · <button class="inline-del" onclick="deleteReply('${th.id}', ${r.ts})">${t('disc.deleteBtn')}</button>` : ''}</div>
               <div class="post-body">${esc(r.body)}</div>
+              ${translateWidget(trKey(th.id, r.ts))}
               ${attachmentChip(r.attachment)}
             </div>
           </div>`;
@@ -1604,5 +1676,5 @@ Object.assign(window, { tryUnlock, showTab, openModal, closeModal, saveName, edi
   pickChan, openThreadModal, createThread, toggleThread, reply, resetThreadForm,
   onThreadFilePicked, onReplyFilePicked, deleteThread, deleteReply,
   pickFolder, addDoc, addMember, onFilePicked, deleteDoc, resetDocForm,
-  onPollChoiceChange, castVote, setLang, openUnitsModal, saveUnits, deleteMember });
+  onPollChoiceChange, castVote, setLang, openUnitsModal, saveUnits, deleteMember, translatePost });
 </script>
