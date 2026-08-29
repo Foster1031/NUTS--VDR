@@ -80,6 +80,13 @@
   .goal-nums .big{font-family:'Black Ops One',system-ui;font-weight:800;font-size:44px;color:var(--leaf-deep);line-height:1}
   .goal-nums .of{font-size:17px;color:var(--ink-soft);font-weight:700}
 
+  /* ---------- kpi grid ---------- */
+  .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:14px}
+  .kpi{background:var(--paper);border:2px solid var(--shell);border-radius:14px;padding:14px 10px;text-align:center}
+  .kpi-num{font-family:'Black Ops One',system-ui;font-weight:800;font-size:32px;color:var(--leaf-deep);line-height:1}
+  .kpi-label{font-size:12.5px;color:var(--ink-soft);font-weight:700;margin-top:6px}
+  .kpi-of{font-size:11px;color:var(--ink-soft);font-weight:600;margin-top:2px}
+
   /* ---------- countdown ---------- */
   .count{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px}
   .count div{background:var(--paper);border:2px solid var(--shell);border-radius:14px;padding:10px 14px;text-align:center;min-width:70px}
@@ -155,6 +162,7 @@
   .member .info{flex:1}
   .member .role{font-size:13.5px;color:var(--ink-soft);font-weight:700}
   .member .contact{font-size:13.5px;color:var(--leaf-deep)}
+  .member .del-btn{flex:none;margin-left:6px}
 
   /* ---------- modal ---------- */
   .modal-bg{position:fixed;inset:0;background:rgba(62,42,26,.45);display:none;align-items:center;justify-content:center;z-index:200;padding:18px}
@@ -257,6 +265,32 @@
         </div>
       </div>
 
+      <div class="card">
+        <div class="topbar" style="margin-bottom:16px">
+          <span class="pill green" data-i18n="dash.kpiPill">Production &amp; Sales</span>
+          <button class="btn ghost small" onclick="openUnitsModal()" data-i18n="dash.updateUnitsBtn">Update units</button>
+        </div>
+        <div class="kpi-grid">
+          <div class="kpi">
+            <div class="kpi-num" id="kpi-produced">0</div>
+            <div class="kpi-label" data-i18n="dash.kpiProduced">Units Produced</div>
+            <div class="kpi-of" id="kpi-produced-of">of 50</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-num" id="kpi-shipped">0</div>
+            <div class="kpi-label" data-i18n="dash.kpiShipped">Units Shipped</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-num" id="kpi-sold">0</div>
+            <div class="kpi-label" data-i18n="dash.kpiSold">Units Sold</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-num" id="kpi-remaining">50</div>
+            <div class="kpi-label" data-i18n="dash.kpiRemaining">Remaining to Sell</div>
+          </div>
+        </div>
+      </div>
+
       <div class="row">
         <div class="card">
           <span class="pill green" data-i18n="dash.launchPill">Launch target</span>
@@ -273,7 +307,7 @@
         <h2 data-i18n="dash.storyHeading">The Story Behind NUTS!</h2>
         <p style="margin-top:8px" data-i18n="dash.storyCapstone">This project is also serving as my capstone for an MIT Executive Education course, Applied Agentic AI for Organizational Transformation. I'm using the course and capstone project as a ground-up development of a new business — covering research, product design and placement, operations management, marketing, finance, and KPI development, alongside the use of AI agents and technology to build this site and all the materials in it. It's been a fun and informative project that's taught me a great deal about the practical functionality of advanced AI systems. I thought it would also be great if it had a philanthropic purpose — hence the game and its small philanthropic goal.</p>
         <p style="margin-top:10px" data-i18n-html="dash.storyOrigin">Nearly thirty years ago, a retired Marine Corps Colonel told me the story of Brigadier General Anthony McAuliffe, who commanded the besieged 101st Airborne Division at Bastogne during the Battle of the Bulge. When German forces demanded his surrender in December 1944, McAuliffe's entire reply was a single word: &ldquo;Nuts!&rdquo; The 101st held the line — and the story stuck with me ever since as a lesson in never giving up, which is exactly why it felt like the right name for this project. <a href="https://militaryhistorynow.com/2020/09/15/nuts-the-story-of-the-famous-american-reply-to-the-german-surrender-ultimatum-at-bastogne/" target="_blank" rel="noopener">Read the full story of Bastogne →</a></p>
-        <p style="margin-top:10px" data-i18n="dash.storyLegal">NUTS! is organized as a Florida LLC. All costs for this initial run are being covered personally — anyone who'd like to contribute their time, ideas, or simply purchase a unit for themselves is very welcome to. The first production run is limited to 50 units, and if the project turns a profit, all of it goes to charity (see the Poll tab to help choose which one). The legal entity will remain in place after this initial run concludes and may be repurposed for future projects.</p>
+        <p style="margin-top:10px" data-i18n="dash.storyLegal">NUTS! is organized as a Florida LLC. All costs for this initial run are being covered personally — anyone who'd like to contribute their time, ideas, or simply purchase a unit for themselves is very welcome to do so. The first production run is limited to 50 units, and if the project turns a profit, all of it goes to charity (see the Poll tab to help choose which one). The legal entity will remain in place after this initial run concludes and may be repurposed for future projects.</p>
       </div>
 
       <div class="card">
@@ -319,6 +353,10 @@
       <div class="topbar">
         <h2 class="display" style="font-size:26px" data-i18n="team.heading">Team</h2>
         <button class="btn small" onclick="openModal('team-modal')" data-i18n="team.addBtn">+ Add yourself</button>
+      </div>
+      <div class="card">
+        <h3 data-i18n="team.codeHeading">About the code words</h3>
+        <p style="margin-top:8px" data-i18n="team.codeBody">To make it easy to stay anonymous, or just for fun, I sent each participant a private code word. Use it instead of your real name if you'd like — I'll still know it's you. It's the same approach I've used running virtual data rooms on other projects, since it helps people at different levels of a team feel comfortable sharing honest opinions without any bias from who else is in the room. Totally up to you: use your real name, the nickname I gave you, or make up something of your own.</p>
       </div>
       <div class="card" id="team-list"><div class="loading">Loading…</div></div>
     </section>
@@ -419,7 +457,24 @@
   </div>
 </div>
 
+<div class="modal-bg" id="units-modal">
+  <div class="modal">
+    <h2 data-i18n="um.title">Update production &amp; sales numbers</h2>
+    <label for="um-produced" data-i18n="dash.kpiProduced">Units Produced</label>
+    <input id="um-produced" type="number" min="0" inputmode="numeric">
+    <label for="um-shipped" data-i18n="dash.kpiShipped">Units Shipped</label>
+    <input id="um-shipped" type="number" min="0" inputmode="numeric">
+    <label for="um-sold" data-i18n="dash.kpiSold">Units Sold</label>
+    <input id="um-sold" type="number" min="0" inputmode="numeric">
+    <div class="actions">
+      <button class="btn ghost" onclick="closeModal('units-modal')" data-i18n="common.cancel">Cancel</button>
+      <button class="btn green" onclick="saveUnits()" data-i18n="um.save">Save</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-bg" id="howto-modal">
+
   <div class="modal howto">
     <h2 data-i18n="howto.title">Adding documents</h2>
     <p class="muted" data-i18n-html="howto.intro1"><b>Easiest:</b> in "Add document," click the upload box and pick a file — it's stored right here on the site and everyone can download it directly. Good for files under 20MB.</p>
@@ -471,12 +526,15 @@ const I18N = {
     "nav.dash":"🏠 Dashboard","nav.disc":"💬 Discussions","nav.docs":"📁 Documents","nav.poll":"🗳️ Poll","nav.team":"🐿️ Team","nav.about":"🌰 About",
     "dash.goalPill":"Fundraising goal","dash.raisedOf":"raised of","dash.profitGoal":"profit goal",
     "dash.goalNote":"Every dollar of profit goes to charity. Hit the goal and we go from there!","dash.updateBtn":"Update amount",
+    "dash.kpiPill":"Production & Sales","dash.updateUnitsBtn":"Update units",
+    "dash.kpiProduced":"Units Produced","dash.kpiShipped":"Units Shipped","dash.kpiSold":"Units Sold","dash.kpiRemaining":"Remaining to Sell",
+    "dash.kpiOf":"of","um.title":"Update production & sales numbers","um.save":"Save",
     "dash.launchPill":"Launch target","dash.launchTitle":"Thanksgiving 2026","dash.missionPill":"Mission",
     "dash.missionShort":"We're building a children's game, selling a limited run, and giving the profits to charity. Full mission statement coming soon — see the About tab.",
     "dash.storyHeading":"The Story Behind NUTS!",
     "dash.storyCapstone":"This project is also serving as my capstone for an MIT Executive Education course, Applied Agentic AI for Organizational Transformation. I'm using the course and capstone project as a ground-up development of a new business — covering research, product design and placement, operations management, marketing, finance, and KPI development, alongside the use of AI agents and technology to build this site and all the materials in it. It's been a fun and informative project that's taught me a great deal about the practical functionality of advanced AI systems. I thought it would also be great if it had a philanthropic purpose — hence the game and its small philanthropic goal.",
     "dash.storyOrigin":"Nearly thirty years ago, a retired Marine Corps Colonel told me the story of Brigadier General Anthony McAuliffe, who commanded the besieged 101st Airborne Division at Bastogne during the Battle of the Bulge. When German forces demanded his surrender in December 1944, McAuliffe's entire reply was a single word: \u201CNuts!\u201D The 101st held the line — and the story stuck with me ever since as a lesson in never giving up, which is exactly why it felt like the right name for this project. <a href=\"https://militaryhistorynow.com/2020/09/15/nuts-the-story-of-the-famous-american-reply-to-the-german-surrender-ultimatum-at-bastogne/\" target=\"_blank\" rel=\"noopener\">Read the full story of Bastogne →</a>",
-    "dash.storyLegal":"NUTS! is organized as a Florida LLC. All costs for this initial run are being covered personally — anyone who'd like to contribute their time, ideas, or simply purchase a unit for themselves is very welcome to. The first production run is limited to 50 units, and if the project turns a profit, all of it goes to charity (see the Poll tab to help choose which one). The legal entity will remain in place after this initial run concludes and may be repurposed for future projects.",
+    "dash.storyLegal":"NUTS! is organized as a Florida LLC. All costs for this initial run are being covered personally — anyone who'd like to contribute their time, ideas, or simply purchase a unit for themselves is very welcome to do so. The first production run is limited to 50 units, and if the project turns a profit, all of it goes to charity (see the Poll tab to help choose which one). The legal entity will remain in place after this initial run concludes and may be repurposed for future projects.",
     "dash.activityHeading":"Latest activity",
     "disc.heading":"Discussions","disc.newThread":"+ New thread","disc.empty":"No threads here yet — start the first one!",
     "disc.postSingular":"post","disc.postPlural":"posts","disc.replyPh":"Write a reply…","disc.replyBtn":"Reply",
@@ -497,6 +555,8 @@ const I18N = {
     "choice.fisher":"Fisher House Foundation","choice.wwp":"Wounded Warrior Project",
     "choice.sowf":"Special Operations Warrior Foundation","choice.mcsf":"Marine Corps Scholarship Fund","choice.other":"Other (please specify)",
     "team.heading":"Team","team.addBtn":"+ Add yourself","team.empty":"Nobody's signed the roster yet — be first!",
+    "team.codeHeading":"About the code words",
+    "team.codeBody":"To make it easy to stay anonymous, or just for fun, I sent each participant a private code word. Use it instead of your real name if you'd like — I'll still know it's you. It's the same approach I've used running virtual data rooms on other projects, since it helps people at different levels of a team feel comfortable sharing honest opinions without any bias from who else is in the room. Totally up to you: use your real name, the nickname I gave you, or make up something of your own.",
     "team.nameRequired":"Name, please!",
     "chan.general":"General","chan.design":"Game Design","chan.marketing":"Marketing & Sales","chan.fundraising":"Fundraising",
     "folder.design":"Game Design","folder.legal":"Business & Legal","folder.marketing":"Marketing","folder.financials":"Financials","folder.misc":"Misc",
@@ -544,6 +604,9 @@ const I18N = {
     "nav.dash":"🏠 Painel","nav.disc":"💬 Discussões","nav.docs":"📁 Documentos","nav.poll":"🗳️ Enquete","nav.team":"🐿️ Equipe","nav.about":"🌰 Sobre",
     "dash.goalPill":"Meta de arrecadação","dash.raisedOf":"arrecadado de","dash.profitGoal":"de meta de lucro",
     "dash.goalNote":"Cada dólar de lucro vai para caridade. Ao bater a meta, seguimos em frente!","dash.updateBtn":"Atualizar valor",
+    "dash.kpiPill":"Produção e Vendas","dash.updateUnitsBtn":"Atualizar unidades",
+    "dash.kpiProduced":"Unidades Produzidas","dash.kpiShipped":"Unidades Enviadas","dash.kpiSold":"Unidades Vendidas","dash.kpiRemaining":"Restantes para Vender",
+    "dash.kpiOf":"de","um.title":"Atualizar números de produção e vendas","um.save":"Salvar",
     "dash.launchPill":"Meta de lançamento","dash.launchTitle":"Ação de Graças de 2026","dash.missionPill":"Missão",
     "dash.missionShort":"Estamos criando um jogo infantil, vendendo uma edição limitada e doando os lucros para caridade. Missão completa em breve — veja a aba Sobre.",
     "dash.storyHeading":"A História por Trás do NUTS!",
@@ -570,6 +633,8 @@ const I18N = {
     "choice.fisher":"Fisher House Foundation","choice.wwp":"Wounded Warrior Project",
     "choice.sowf":"Special Operations Warrior Foundation","choice.mcsf":"Marine Corps Scholarship Fund","choice.other":"Outro (especifique)",
     "team.heading":"Equipe","team.addBtn":"+ Adicionar-se","team.empty":"Ainda ninguém se cadastrou — seja o primeiro!",
+    "team.codeHeading":"Sobre as palavras-código",
+    "team.codeBody":"Para facilitar o anonimato, ou só por diversão, enviei uma palavra-código privada para cada participante. Use-a no lugar do seu nome real se preferir — eu ainda vou saber que é você. É a mesma abordagem que já usei em salas de dados virtuais de outros projetos, pois ajuda pessoas em diferentes níveis da equipe a se sentirem à vontade para compartilhar opiniões sinceras, sem qualquer viés por causa de quem mais está na sala. Fica a seu critério: use seu nome real, o apelido que te dei, ou invente o seu próprio.",
     "team.nameRequired":"Nome, por favor!",
     "chan.general":"Geral","chan.design":"Design do Jogo","chan.marketing":"Marketing e Vendas","chan.fundraising":"Arrecadação",
     "folder.design":"Design do Jogo","folder.legal":"Negócios e Jurídico","folder.marketing":"Marketing","folder.financials":"Financeiro","folder.misc":"Diversos",
@@ -620,6 +685,7 @@ function t(key){
 /* ================= config ================= */
 const CODE = 'ROCHAMBEAU';
 const GOAL = 500;
+const PLANNED_RUN = 50;
 const LAUNCH = new Date('2026-11-26T00:00:00');
 const CHANNELS = [
   {id:'general', ic:'🌰', key:'chan.general'},
@@ -645,7 +711,7 @@ const POLL_CHOICES = [
 let me = '';
 let curChan = 'general';
 let curFolder = 'design';
-let threadsCache = {}, docsCache = [], teamCache = [], settingsCache = {raised:0};
+let threadsCache = {}, docsCache = [], teamCache = [], settingsCache = {raised:0, unitsProduced:0, unitsShipped:0, unitsSold:0};
 let pollCache = {};
 let pickedFile = null;
 let pendingThreadFile = null;
@@ -714,7 +780,7 @@ async function setLang(lang){
   applyLang(lang);
   await sSet('lang', currentLang, false);
   buildChanTabs(); buildFolderTabs(); fillSelects();
-  renderThreads(); renderDocs(); renderTeam(); renderPoll(); renderActivity(); renderGoal();
+  renderThreads(); renderDocs(); renderTeam(); renderPoll(); renderActivity(); renderGoal(); renderKPIs();
   updateCountdown();
 }
 (async function initLang(){
@@ -755,8 +821,9 @@ async function boot(){
   await refreshAll();
 }
 async function refreshAll(){
-  settingsCache = await sGet('settings', true, {raised:0});
+  settingsCache = await sGet('settings', true, {raised:0, unitsProduced:0, unitsShipped:0, unitsSold:0});
   renderGoal();
+  renderKPIs();
   const loads = CHANNELS.map(async c=>{ threadsCache[c.id] = await sGet('threads-'+c.id, true, []); });
   await Promise.all(loads);
   docsCache = await sGet('docs', true, []);
@@ -804,6 +871,42 @@ async function editRaised(){
   if(isNaN(n)){ alert(t('alert.numbersOnly')); return; }
   settingsCache.raised = n;
   if(await sSet('settings', settingsCache, true)) renderGoal();
+}
+function renderKPIs(){
+  const produced = Number(settingsCache.unitsProduced)||0;
+  const shipped = Number(settingsCache.unitsShipped)||0;
+  const sold = Number(settingsCache.unitsSold)||0;
+  const remaining = Math.max(0, PLANNED_RUN - sold);
+  const elP = document.getElementById('kpi-produced');
+  const elS = document.getElementById('kpi-shipped');
+  const elO = document.getElementById('kpi-sold');
+  const elR = document.getElementById('kpi-remaining');
+  const elOf = document.getElementById('kpi-produced-of');
+  if(elP) elP.textContent = produced.toLocaleString();
+  if(elS) elS.textContent = shipped.toLocaleString();
+  if(elO) elO.textContent = sold.toLocaleString();
+  if(elR) elR.textContent = remaining.toLocaleString();
+  if(elOf) elOf.textContent = `${t('dash.kpiOf')} ${PLANNED_RUN}`;
+}
+function openUnitsModal(){
+  if(needName()) return;
+  document.getElementById('um-produced').value = settingsCache.unitsProduced||0;
+  document.getElementById('um-shipped').value = settingsCache.unitsShipped||0;
+  document.getElementById('um-sold').value = settingsCache.unitsSold||0;
+  openModal('units-modal');
+}
+async function saveUnits(){
+  const p = Number(document.getElementById('um-produced').value);
+  const s = Number(document.getElementById('um-shipped').value);
+  const so = Number(document.getElementById('um-sold').value);
+  if(isNaN(p) || isNaN(s) || isNaN(so) || p<0 || s<0 || so<0){ alert(t('alert.numbersOnly')); return; }
+  settingsCache.unitsProduced = p;
+  settingsCache.unitsShipped = s;
+  settingsCache.unitsSold = so;
+  if(await sSet('settings', settingsCache, true)){
+    renderKPIs();
+    closeModal('units-modal');
+  }
 }
 function updateCountdown(){
   const el = document.getElementById('countdown');
@@ -1141,7 +1244,19 @@ function renderTeam(){
         <div class="role">${esc(m.role||'')}</div>
       </div>
       ${m.contact?`<div class="contact">${esc(m.contact)}</div>`:''}
+      <button class="del-btn" onclick="deleteMember('${m.id}')">${t('docs.removeBtn')}</button>
     </div>`).join('');
+}
+async function deleteMember(id){
+  const fresh = await sGet('team', true, []);
+  const m = fresh.find(x=>x.id===id);
+  if(!m) return;
+  if(!confirm(`${t('docs.confirmRemovePrefix')}${m.name}${t('docs.confirmRemoveSuffix')}`)) return;
+  const updated = fresh.filter(x=>x.id!==id);
+  if(await sSet('team', updated, true)){
+    teamCache = updated;
+    renderTeam();
+  }
 }
 async function addMember(){
   const name = document.getElementById('tm-name').value.trim();
@@ -1252,5 +1367,5 @@ Object.assign(window, { tryUnlock, showTab, openModal, closeModal, saveName, edi
   pickChan, openThreadModal, createThread, toggleThread, reply, resetThreadForm,
   onThreadFilePicked, onReplyFilePicked, deleteThread, deleteReply,
   pickFolder, addDoc, addMember, onFilePicked, deleteDoc, resetDocForm,
-  onPollChoiceChange, castVote, setLang });
+  onPollChoiceChange, castVote, setLang, openUnitsModal, saveUnits, deleteMember });
 </script>
