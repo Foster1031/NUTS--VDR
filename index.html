@@ -1,4 +1,6 @@
 <!-- NUTS! Project VDR — single-file app -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Saira:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
 <style>
@@ -27,7 +29,7 @@
     color:var(--ink);font-family:'Saira',sans-serif;font-size:16px;line-height:1.55;min-height:100vh}
   h1,h2,h3,.display{font-family:'Black Ops One',system-ui}
   button{font-family:'Saira',sans-serif;cursor:pointer}
-  input,textarea,select{font-family:'Saira',sans-serif;font-size:15px;color:var(--ink)}
+  input,textarea,select{font-family:'Saira',sans-serif;font-size:16px;color:var(--ink)}
   a{color:var(--leaf-deep)}
   .wrap{max-width:880px;margin:0 auto;padding:0 16px 90px}
 
@@ -106,7 +108,7 @@
   .thread{background:var(--card);border:2px solid var(--shell);border-radius:var(--radius);margin-bottom:14px;overflow:hidden}
   .thread-head{padding:16px 18px;cursor:pointer;display:flex;gap:10px;align-items:baseline}
   .thread-head:hover{background:#EFEBD6}
-  .thread-head h3{flex:1}
+  .thread-head h3{flex:1;min-width:0;overflow-wrap:anywhere}
   .thread-body{padding:0 18px 16px;display:none}
   .thread.open .thread-body{display:block}
   .post{display:flex;gap:10px;padding:12px 14px;background:var(--paper);border-radius:12px;margin-bottom:10px}
@@ -131,7 +133,8 @@
   .folder-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
   .folder-tabs button{border:2px solid var(--shell);background:var(--card);border-radius:12px;padding:7px 14px;font-weight:800;font-size:14px;color:var(--ink-soft)}
   .folder-tabs button.on{border-color:var(--acorn);background:#DFDCB8;color:var(--acorn-deep)}
-  .doc{display:flex;gap:12px;align-items:flex-start;padding:14px 0;border-bottom:1.5px dashed var(--shell)}
+  .doc{display:flex;gap:12px;align-items:flex-start;padding:14px 0;border-bottom:1.5px dashed var(--shell);flex-wrap:wrap}
+  .doc-body{flex:1;min-width:180px;overflow-wrap:anywhere}
   .doc:last-child{border:none}
   .doc .ic{font-size:22px;line-height:1.3}
   .doc h3 a{color:var(--ink);text-decoration:none}
@@ -156,12 +159,12 @@
   .progress-label{font-size:12.5px;color:var(--ink-soft);font-weight:700;margin-top:4px}
 
   /* ---------- team ---------- */
-  .member{display:flex;gap:14px;align-items:center;padding:12px 0;border-bottom:1.5px dashed var(--shell)}
+  .member{display:flex;gap:14px;align-items:center;padding:12px 0;border-bottom:1.5px dashed var(--shell);flex-wrap:wrap}
   .member:last-child{border:none}
   .avatar{width:44px;height:44px;border-radius:50%;background:var(--acorn);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Black Ops One',system-ui;font-weight:800;font-size:19px;flex:none}
-  .member .info{flex:1}
+  .member .info{flex:1;min-width:120px}
   .member .role{font-size:13.5px;color:var(--ink-soft);font-weight:700}
-  .member .contact{font-size:13.5px;color:var(--leaf-deep)}
+  .member .contact{font-size:13.5px;color:var(--leaf-deep);overflow-wrap:anywhere}
   .member .del-btn{flex:none;margin-left:6px}
 
   /* ---------- modal ---------- */
@@ -196,18 +199,83 @@
   .topbar{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:14px}
 
   /* ---------- language toggle ---------- */
-  .lang-toggle{position:fixed;top:14px;right:14px;z-index:110;display:flex;gap:4px;background:var(--card);border:2px solid var(--shell);border-radius:999px;padding:4px;box-shadow:0 4px 14px rgba(62,42,26,.10)}
-  .lang-toggle button{background:transparent;border:none;border-radius:999px;padding:6px 10px;font-size:18px;line-height:1;opacity:.45;transition:opacity .12s,background .12s}
+  .lang-toggle{position:fixed;top:14px;right:14px;z-index:110;display:flex;gap:3px;background:var(--card);border:2px solid var(--shell);border-radius:999px;padding:4px;box-shadow:0 4px 14px rgba(62,42,26,.10)}
+  .lang-toggle button{background:transparent;border:none;border-radius:8px;padding:5px 5px;line-height:1;display:flex;align-items:center;opacity:.5;transition:opacity .12s,background .12s}
+  .lang-toggle button svg{display:block;width:24px;height:17px;border-radius:3px;box-shadow:0 0 0 1px rgba(35,40,25,.18)}
   .lang-toggle button:hover{opacity:.8}
   .lang-toggle button.on{opacity:1;background:var(--shell)}
   .lang-toggle button:focus-visible{outline:3px solid var(--acorn);outline-offset:1px}
-  @media (max-width:480px){ .lang-toggle{top:8px;right:8px} }
+  /* ---------- responsive: tablets & large phones ---------- */
+  @media (max-width:900px){
+    nav{padding-right:96px}
+  }
+
+  /* ---------- responsive: phones ---------- */
+  @media (max-width:480px){
+    .lang-toggle{top:8px;right:8px;gap:2px;padding:3px}
+    .lang-toggle button{padding:4px 4px}
+    .lang-toggle button svg{width:19px;height:13px}
+    header{padding:20px 12px 4px}
+    header .wordmark{font-size:32px;letter-spacing:2px}
+    .gate-card .wordmark{font-size:38px;letter-spacing:2px}
+    .gate-card{padding:32px 22px}
+    nav{padding:10px 6px;padding-right:78px;gap:6px}
+    nav button{padding:7px 12px;font-size:13.5px}
+    .wrap{padding:0 12px 90px}
+    .card{padding:16px}
+    .goal-flex{justify-content:center;text-align:center}
+    .goal-nums{min-width:0;width:100%;text-align:center}
+    .goal-nums .big{font-size:36px}
+    .kpi-num{font-size:26px}
+    .modal{padding:20px}
+    .doc-actions{width:100%;justify-content:flex-end;margin-left:0}
+  }
 </style>
 
 <!-- ================= LANGUAGE TOGGLE ================= -->
-<div class="lang-toggle" id="lang-toggle" role="group" aria-label="Language / Idioma">
-  <button id="lang-btn-en" class="on" onclick="setLang('en')" title="English" aria-label="English">🇺🇸</button>
-  <button id="lang-btn-pt" onclick="setLang('pt')" title="Português" aria-label="Português">🇧🇷</button>
+<div class="lang-toggle" id="lang-toggle" role="group" aria-label="Language / Idioma / Język">
+  <button id="lang-btn-en" class="on" onclick="setLang('en')" title="English" aria-label="English">
+    <svg viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="20" height="14" fill="#B22234"/>
+      <rect y="1.08" width="20" height="1.08" fill="#fff"/>
+      <rect y="3.23" width="20" height="1.08" fill="#fff"/>
+      <rect y="5.38" width="20" height="1.08" fill="#fff"/>
+      <rect y="7.54" width="20" height="1.08" fill="#fff"/>
+      <rect y="9.69" width="20" height="1.08" fill="#fff"/>
+      <rect y="11.85" width="20" height="1.08" fill="#fff"/>
+      <rect width="8.6" height="7.54" fill="#3C3B6E"/>
+      <g fill="#fff">
+        <circle cx="1.6" cy="1.3" r="0.35"/><circle cx="3.2" cy="1.3" r="0.35"/><circle cx="4.8" cy="1.3" r="0.35"/><circle cx="6.4" cy="1.3" r="0.35"/><circle cx="7.9" cy="1.3" r="0.35"/>
+        <circle cx="2.4" cy="2.6" r="0.35"/><circle cx="4" cy="2.6" r="0.35"/><circle cx="5.6" cy="2.6" r="0.35"/><circle cx="7.2" cy="2.6" r="0.35"/>
+        <circle cx="1.6" cy="3.9" r="0.35"/><circle cx="3.2" cy="3.9" r="0.35"/><circle cx="4.8" cy="3.9" r="0.35"/><circle cx="6.4" cy="3.9" r="0.35"/><circle cx="7.9" cy="3.9" r="0.35"/>
+        <circle cx="2.4" cy="5.2" r="0.35"/><circle cx="4" cy="5.2" r="0.35"/><circle cx="5.6" cy="5.2" r="0.35"/><circle cx="7.2" cy="5.2" r="0.35"/>
+        <circle cx="1.6" cy="6.4" r="0.35"/><circle cx="3.2" cy="6.4" r="0.35"/><circle cx="4.8" cy="6.4" r="0.35"/><circle cx="6.4" cy="6.4" r="0.35"/><circle cx="7.9" cy="6.4" r="0.35"/>
+      </g>
+    </svg>
+  </button>
+  <button id="lang-btn-pt" onclick="setLang('pt')" title="Português" aria-label="Português">
+    <svg viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="20" height="14" fill="#009739"/>
+      <polygon points="10,1.4 18.6,7 10,12.6 1.4,7" fill="#FEDD00"/>
+      <circle cx="10" cy="7" r="3.3" fill="#012169"/>
+      <path d="M6.9,6 A3.3,3.3 0 0 0 13.1,6" fill="none" stroke="#fff" stroke-width="0.35"/>
+    </svg>
+  </button>
+  <button id="lang-btn-es" onclick="setLang('es')" title="Español" aria-label="Español">
+    <svg viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="6.67" height="14" fill="#006341"/>
+      <rect x="6.67" width="6.67" height="14" fill="#fff"/>
+      <rect x="13.34" width="6.66" height="14" fill="#CE1126"/>
+      <circle cx="10" cy="7" r="1.8" fill="#8B5E3C"/>
+      <circle cx="10" cy="7" r="1.05" fill="#4C7031"/>
+    </svg>
+  </button>
+  <button id="lang-btn-pl" onclick="setLang('pl')" title="Polski" aria-label="Polski">
+    <svg viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="20" height="7" fill="#fff"/>
+      <rect y="7" width="20" height="7" fill="#DC143C"/>
+    </svg>
+  </button>
 </div>
 
 <!-- ================= GATE ================= -->
@@ -674,6 +742,172 @@ const I18N = {
     "count.days":"dias","count.hours":"horas","count.mins":"min","count.launched":"Lançado!",
     "alert.saveFail":"Ops — isso não foi salvo. Verifique sua conexão e tente novamente.",
     "alert.raisedPrompt":"Valor arrecadado até agora (somente números):","alert.numbersOnly":"Somente números, por favor."
+  },
+  es: {
+    "gate.sub":"Espacio de trabajo del proyecto · solo personal autorizado","gate.ph":"Código de acceso",
+    "gate.btn":"Autenticar","gate.err":"Acceso denegado — pide el código a alguien del equipo.",
+    "header.sub":"Proyecto de Juego Infantil · Jugando por una Causa","nav.dash":"🏠 Panel",
+    "nav.disc":"💬 Debates","nav.docs":"📁 Documentos",
+    "nav.poll":"🗳️ Encuesta","nav.team":"🐿️ Equipo",
+    "nav.about":"🌰 Acerca de","dash.goalPill":"Meta de recaudación",
+    "dash.raisedOf":"recaudado de","dash.profitGoal":"como meta de ganancias",
+    "dash.goalNote":"Cada dólar de ganancia va a la caridad. ¡Al alcanzar la meta, seguimos adelante!","dash.updateBtn":"Actualizar monto",
+    "dash.kpiPill":"Producción y Ventas","dash.updateUnitsBtn":"Actualizar unidades",
+    "dash.kpiProduced":"Unidades Producidas","dash.kpiShipped":"Unidades Enviadas",
+    "dash.kpiSold":"Unidades Vendidas","dash.kpiRemaining":"Restantes por Vender",
+    "dash.kpiOf":"de","um.title":"Actualizar cifras de producción y ventas",
+    "um.save":"Guardar","dash.launchPill":"Fecha de lanzamiento",
+    "dash.launchTitle":"Día de Acción de Gracias 2026","dash.missionPill":"Misión",
+    "dash.missionShort":"Estamos creando un juego infantil, vendiendo una edición limitada y donando las ganancias a la caridad. Declaración de misión completa próximamente — consulta la pestaña Acerca de.","dash.storyHeading":"La Historia Detrás de NUTS!",
+    "dash.storyCapstone":"Este proyecto también es mi proyecto final (capstone) de un curso de Educación Ejecutiva del MIT, Applied Agentic AI for Organizational Transformation. Estoy usando el curso y el proyecto final como el desarrollo completo, desde cero, de un nuevo negocio — abarcando investigación, diseño y posicionamiento de producto, gestión de operaciones, marketing, finanzas y desarrollo de KPIs, además del uso de agentes de IA y tecnología para construir este sitio y todos los materiales que contiene. Ha sido un proyecto divertido e instructivo que me ha enseñado mucho sobre la funcionalidad práctica de los sistemas avanzados de IA. También pensé que sería genial si tuviera un propósito filantrópico — de ahí el juego y su pequeña meta filantrópica.","dash.storyOrigin":"Hace casi treinta años, un Coronel retirado del Cuerpo de Marines de EE. UU. me contó la historia del General de Brigada Anthony McAuliffe, quien comandaba la asediada 101.ª División Aerotransportada en Bastogne durante la Batalla de las Ardenas. Cuando las fuerzas alemanas exigieron su rendición en diciembre de 1944, la respuesta completa de McAuliffe fue una sola palabra: “¡Nuts!” La 101.ª resistió — y esa historia se quedó conmigo desde entonces como una lección de nunca rendirse, y por eso me pareció el nombre perfecto para este proyecto. <a href=\"https://militaryhistorynow.com/2020/09/15/nuts-the-story-of-the-famous-american-reply-to-the-german-surrender-ultimatum-at-bastogne/\" target=\"_blank\" rel=\"noopener\">Lee la historia completa de Bastogne →</a>",
+    "dash.storyLegal":"NUTS! está constituida como una LLC de Florida. Todos los costos de esta primera producción se están cubriendo personalmente — cualquiera que desee aportar su tiempo, ideas, o simplemente comprar una unidad para sí mismo, es muy bienvenido a hacerlo. La primera producción está limitada a 50 unidades, y si el proyecto genera ganancias, todas irán a la caridad (consulta la pestaña Encuesta para ayudar a elegir cuál). La entidad legal seguirá existiendo después de que concluya esta etapa inicial y podrá reutilizarse en proyectos futuros.","dash.activityHeading":"Actividad reciente",
+    "disc.heading":"Debates","disc.newThread":"+ Nuevo tema",
+    "disc.empty":"Todavía no hay temas aquí — ¡comienza el primero!","disc.postSingular":"publicación",
+    "disc.postPlural":"publicaciones","disc.replyPh":"Escribe una respuesta…",
+    "disc.replyBtn":"Responder","disc.threadMoved":"Ese tema acaba de cambiar — actualizando.",
+    "disc.titleAndBody":"Un título y una primera publicación son un buen comienzo.","docs.heading":"Documentos",
+    "docs.howtoBtn":"Cómo vincular un archivo","docs.addBtn":"+ Agregar documento",
+    "docs.emptyPrefix":"Nada en","docs.emptySuffix":"todavía. ¡Agrega el primer documento!",
+    "docs.addedBy":"Agregado por","docs.alsoLinked":"también vinculado",
+    "docs.removeBtn":"Eliminar","docs.titleRequired":"Dale un título para que la gente sepa de qué se trata.",
+    "docs.needFileOrLink":"Sube un archivo o pega un enlace.","docs.fileTooBig":"Ese archivo supera los 20MB. Usa la opción de enlace de Drive/Dropbox a continuación.",
+    "docs.uploadFail":"La subida no se completó — revisa tu conexión e inténtalo de nuevo.","docs.confirmRemovePrefix":"Eliminar \"",
+    "docs.confirmRemoveSuffix":"\"? Esto no se puede deshacer.","poll.heading":"¿A dónde debería ir el dinero?",
+    "poll.sub":"Vota por la organización benéfica que te gustaría que NUTS! apoye. Un voto por persona.","poll.voteSingular":"voto",
+    "poll.votePlural":"votos","poll.castSoFar":"emitidos hasta ahora",
+    "poll.castVote":"Emite tu voto","poll.otherPh":"Dinos dónde…",
+    "poll.votedPrefix":"✅ Votaste por","poll.votedThanks":"Gracias por participar — un voto por persona, así que esto queda registrado.",
+    "poll.seeOther":"Ver sugerencias de \"Otro\"","poll.pickFirst":"Primero elige una opción.",
+    "poll.otherRequired":"Cuéntanos qué significa \"Otro\" para ti.","poll.alreadyVoted":"Parece que ya votaste.",
+    "choice.fisher":"Fisher House Foundation","choice.wwp":"Wounded Warrior Project",
+    "choice.sowf":"Special Operations Warrior Foundation","choice.mcsf":"Marine Corps Scholarship Fund",
+    "choice.other":"Otro (especifique)","team.heading":"Equipo",
+    "team.addBtn":"+ Añadirme","team.empty":"Todavía nadie se ha unido a la lista — ¡sé el primero!",
+    "team.codeHeading":"Sobre las palabras clave","team.codeBody":"Para facilitar el anonimato, o simplemente por diversión, envié a cada participante una palabra clave privada. Úsala en lugar de tu nombre real si lo prefieres — de todos modos sabré que eres tú. Es el mismo enfoque que se usa en salas de datos virtuales en las que he participado en otros proyectos, ya que ayuda a que personas de distintos niveles dentro de un equipo se sientan cómodas compartiendo opiniones honestas sin ningún sesgo por saber quién más está en la sala. Depende totalmente de ti: usa tu nombre real, el apodo que te di, o inventa el tuyo propio.",
+    "team.nameRequired":"¡El nombre, por favor!","chan.general":"General",
+    "chan.design":"Diseño del Juego","chan.marketing":"Marketing y Ventas",
+    "chan.fundraising":"Recaudación de Fondos","folder.design":"Diseño del Juego",
+    "folder.legal":"Negocios y Legal","folder.marketing":"Marketing",
+    "folder.financials":"Finanzas","folder.misc":"Varios",
+    "about.missionHeading":"Nuestra misión","about.missionFull":"Declaración de misión completa próximamente. En resumen: NUTS! es un proyecto pequeño y de gran corazón. Estamos diseñando un juego infantil, produciéndolo y vendiéndolo en una edición limitada, y donando las ganancias a la caridad. Primera meta: $500 de ganancia — luego seguimos creciendo desde ahí.",
+    "about.companyHeading":"La empresa","about.companyLine1":"<b>NUTS! LLC</b> · sociedad de responsabilidad limitada de Florida · Vigente desde el 26 de agosto de 2026",
+    "about.companyLine2":"Todos los costos de la primera producción de 50 unidades se cubren personalmente. Vota por la organización benéfica en la pestaña Encuesta — cada dólar de ganancia, si lo hay, irá a la causa ganadora.","about.howHeading":"Cómo funciona este sitio",
+    "about.howBody":"Esta es nuestra sala de proyecto compartida. Todo lo que se publica aquí — debates, enlaces de documentos, información del equipo — es visible para cualquiera que tenga el código de acceso. Nada aquí es privado, así que mantén fuera los detalles realmente sensibles (información financiera personal, contraseñas). Publica en <b>Debates</b>, vincula archivos en <b>Documentos</b>, y añádete a la página de <b>Equipo</b> para que sepamos quién es quién.","footer.note":"Sala del proyecto NUTS! · espacio compartido — todos los miembros ven el mismo contenido",
+    "nm.title":"¿Quién anda ahí? 🎖️","nm.sub":"Tu nombre aparece en tus publicaciones para que el equipo sepa quién dijo qué.",
+    "nm.label":"Tu nombre","nm.ph":"ej. Sam R.",
+    "nm.btn":"Ese soy yo","thm.title":"Nuevo tema",
+    "thm.channelLabel":"Canal","thm.titleLabel":"Título",
+    "thm.titlePh":"¿De qué se trata?","thm.bodyLabel":"Primera publicación",
+    "thm.bodyPh":"Inicia la conversación…","thm.post":"Publicar tema",
+    "common.cancel":"Cancelar","thm.attachLabel":"Adjuntar un archivo (opcional)",
+    "disc.attachBtn":"📎 Adjuntar","disc.deleteBtn":"Eliminar",
+    "disc.youTag":"Tú","disc.deleteThreadConfirm":"¿Eliminar este tema y todas sus respuestas? Esto no se puede deshacer.",
+    "disc.deleteReplyConfirm":"¿Eliminar esta respuesta? Esto no se puede deshacer.","dm.title":"Agregar un documento",
+    "dm.folderLabel":"Carpeta","dm.titleLabel":"Título",
+    "dm.titlePh":"ej. Borrador de reglas v2","dm.uploadLabel":"Subir un archivo",
+    "dm.dropText":"Haz clic para elegir un archivo (máx. 20MB)","dm.uploading":"Subiendo…",
+    "dm.or":"o","dm.linkLabel":"Enlace (Google Drive, Dropbox, etc.)",
+    "dm.linkPh":"https://…  (úsalo para archivos muy grandes)","dm.descLabel":"Descripción / notas",
+    "dm.descPh":"¿Qué es? ¿Algo que debamos saber?","dm.submit":"Agregar documento",
+    "tm.title":"Añádete al equipo","tm.nameLabel":"Nombre",
+    "tm.roleLabel":"Rol en el proyecto","tm.rolePh":"ej. Diseño de juego, Marketing, Finanzas",
+    "tm.contactLabel":"Contacto (correo o teléfono — opcional)","tm.addMe":"Añadirme",
+    "howto.title":"Agregar documentos","howto.intro1":"<b>Lo más fácil:</b> en \"Agregar documento\", haz clic en el cuadro de subida y elige un archivo — se almacena directamente en el sitio y todos pueden descargarlo. Ideal para archivos de menos de 20MB.",
+    "howto.intro2":"Para archivos más grandes (videos largos, archivos enormes), enlaza a Google Drive o Dropbox en su lugar. Dos minutos, como máximo.","howto.gdriveHeading":"📗 Google Drive",
+    "howto.gdriveSteps":"<li>Sube tu archivo a Drive (arrástralo a <a href=\"https://drive.google.com\" target=\"_blank\" rel=\"noopener\">drive.google.com</a>).</li><li>Haz clic derecho en el archivo → <b>Compartir</b>.</li><li>En \"Acceso general\", cambia de <b>Restringido</b> a <b>Cualquier persona con el enlace</b> (déjalo como Lector).</li><li>Haz clic en <b>Copiar enlace</b> y pégalo en \"Agregar documento\" aquí.</li>","howto.dropboxHeading":"📘 Dropbox",
+    "howto.dropboxSteps":"<li>Sube tu archivo en <a href=\"https://dropbox.com\" target=\"_blank\" rel=\"noopener\">dropbox.com</a>.</li><li>Pasa el cursor sobre el archivo → haz clic en <b>Compartir</b> (o Copiar enlace).</li><li>Asegúrate de que la configuración del enlace sea <b>Cualquier persona con este enlace puede ver</b>.</li><li>Copia el enlace y pégalo aquí en \"Agregar documento\".</li>","howto.tip":"Consejo: nombra los archivos con claridad (ej. <i>NUTS-presupuesto-v3.xlsx</i>) para que la lista se mantenga ordenada.",
+    "howto.gotIt":"Entendido","activity.started":"inició",
+    "activity.repliedIn":"respondió en","activity.added":"agregó",
+    "activity.votedPoll":"votó en la encuesta benéfica","activity.empty":"Todo tranquilo por aquí. Inicia un tema o agrega un documento para poner las cosas en marcha.",
+    "activity.someone":"Alguien","ago.justNow":"justo ahora",
+    "ago.mAgo":" min atrás","ago.hAgo":" h atrás",
+    "count.days":"días","count.hours":"horas",
+    "count.mins":"min","count.launched":"¡Lanzado!",
+    "alert.saveFail":"Uy — eso no se guardó. Revisa tu conexión e inténtalo de nuevo.","alert.raisedPrompt":"Monto recaudado hasta ahora (solo números):",
+    "alert.numbersOnly":"Solo números, por favor.",
+  },
+  pl: {
+    "gate.sub":"Przestrzeń robocza projektu · tylko dla upoważnionych osób","gate.ph":"Kod dostępu",
+    "gate.btn":"Uwierzytelnij","gate.err":"Odmowa dostępu — poproś o kod kogoś z zespołu.",
+    "header.sub":"Projekt Gry dla Dzieci · Gramy dla Dobroczynności","nav.dash":"🏠 Panel",
+    "nav.disc":"💬 Dyskusje","nav.docs":"📁 Dokumenty",
+    "nav.poll":"🗳️ Ankieta","nav.team":"🐿️ Zespół",
+    "nav.about":"🌰 O projekcie","dash.goalPill":"Cel zbiórki",
+    "dash.raisedOf":"zebrano z","dash.profitGoal":"jako cel zysku",
+    "dash.goalNote":"Każdy dolar zysku trafia na cele charytatywne. Po osiągnięciu celu ruszamy dalej!","dash.updateBtn":"Zaktualizuj kwotę",
+    "dash.kpiPill":"Produkcja i Sprzedaż","dash.updateUnitsBtn":"Zaktualizuj sztuki",
+    "dash.kpiProduced":"Wyprodukowane sztuki","dash.kpiShipped":"Wysłane sztuki",
+    "dash.kpiSold":"Sprzedane sztuki","dash.kpiRemaining":"Pozostało do sprzedania",
+    "dash.kpiOf":"z","um.title":"Zaktualizuj dane produkcji i sprzedaży",
+    "um.save":"Zapisz","dash.launchPill":"Termin premiery",
+    "dash.launchTitle":"Święto Dziękczynienia 2026","dash.missionPill":"Misja",
+    "dash.missionShort":"Tworzymy grę dla dzieci, sprzedajemy ją w ograniczonej edycji i przekazujemy zyski na cele charytatywne. Pełna misja pojawi się wkrótce — zobacz zakładkę O projekcie.","dash.storyHeading":"Historia Kryjąca Się za NUTS!",
+    "dash.storyCapstone":"Ten projekt służy również jako mój projekt końcowy (capstone) w ramach kursu MIT Executive Education, Applied Agentic AI for Organizational Transformation. Wykorzystuję ten kurs i projekt końcowy jako budowę nowej firmy od podstaw — obejmującą badania, projektowanie i pozycjonowanie produktu, zarządzanie operacjami, marketing, finanse i rozwój KPI, a także wykorzystanie agentów AI i technologii do zbudowania tej strony i wszystkich zawartych w niej materiałów. To był zabawny i pouczający projekt, który nauczył mnie wiele o praktycznej funkcjonalności zaawansowanych systemów AI. Pomyślałem też, że byłoby wspaniale, gdyby miał cel charytatywny — stąd gra i jej niewielki cel dobroczynny.","dash.storyOrigin":"Prawie trzydzieści lat temu emerytowany pułkownik piechoty morskiej USA opowiedział mi historię generała brygady Anthony'ego McAuliffe'a, który dowodził okrążoną 101. Dywizją Powietrznodesantową pod Bastogne podczas bitwy o Ardeny. Gdy w grudniu 1944 roku siły niemieckie zażądały jego kapitulacji, cała odpowiedź McAuliffe'a brzmiała jedno słowo: „Nuts!” (coś w rodzaju „Też coś!”). 101. Dywizja utrzymała linię — a ta historia zapadła mi w pamięć jako lekcja, by nigdy się nie poddawać, i właśnie dlatego wydała mi się odpowiednią nazwą dla tego projektu. <a href=\"https://militaryhistorynow.com/2020/09/15/nuts-the-story-of-the-famous-american-reply-to-the-german-surrender-ultimatum-at-bastogne/\" target=\"_blank\" rel=\"noopener\">Przeczytaj pełną historię Bastogne →</a>",
+    "dash.storyLegal":"NUTS! działa jako spółka LLC zarejestrowana na Florydzie. Wszystkie koszty tej pierwszej edycji pokrywam osobiście — każdy, kto chciałby poświęcić swój czas, podzielić się pomysłami lub po prostu kupić jedną sztukę dla siebie, jest bardzo mile widziany. Pierwsza produkcja jest ograniczona do 50 sztuk, a jeśli projekt przyniesie zysk, w całości trafi on na cele charytatywne (zobacz zakładkę Ankieta, aby pomóc wybrać, na jaki cel). Podmiot prawny pozostanie po zakończeniu tej pierwszej edycji i może zostać wykorzystany w przyszłych projektach.","dash.activityHeading":"Najnowsza aktywność",
+    "disc.heading":"Dyskusje","disc.newThread":"+ Nowy wątek",
+    "disc.empty":"Nie ma tu jeszcze żadnych wątków — załóż pierwszy!","disc.postSingular":"post",
+    "disc.postPlural":"posty","disc.replyPh":"Napisz odpowiedź…",
+    "disc.replyBtn":"Odpowiedz","disc.threadMoved":"Ten wątek właśnie się zmienił — odświeżanie.",
+    "disc.titleAndBody":"Tytuł i pierwszy post to dobry początek.","docs.heading":"Dokumenty",
+    "docs.howtoBtn":"Jak połączyć plik","docs.addBtn":"+ Dodaj dokument",
+    "docs.emptyPrefix":"Brak plików w","docs.emptySuffix":"na razie. Dodaj pierwszy dokument!",
+    "docs.addedBy":"Dodane przez","docs.alsoLinked":"również połączony",
+    "docs.removeBtn":"Usuń","docs.titleRequired":"Nadaj tytuł, aby inni wiedzieli, co to jest.",
+    "docs.needFileOrLink":"Prześlij plik lub wklej link.","docs.fileTooBig":"Ten plik ma ponad 20 MB. Użyj zamiast tego opcji linku Drive/Dropbox poniżej.",
+    "docs.uploadFail":"Przesyłanie się nie powiodło — sprawdź połączenie i spróbuj ponownie.","docs.confirmRemovePrefix":"Usunąć „",
+    "docs.confirmRemoveSuffix":"”? Tego nie można cofnąć.","poll.heading":"Na co powinny trafić pieniądze?",
+    "poll.sub":"Zagłosuj na organizację charytatywną, którą chciałbyś, aby wsparł NUTS! Jeden głos na osobę.","poll.voteSingular":"głos",
+    "poll.votePlural":"głosów","poll.castSoFar":"oddanych do tej pory",
+    "poll.castVote":"Oddaj głos","poll.otherPh":"Powiedz nam gdzie…",
+    "poll.votedPrefix":"✅ Zagłosowałeś na","poll.votedThanks":"Dzięki za udział — jeden głos na osobę, więc Twój wybór jest już zapisany.",
+    "poll.seeOther":"Zobacz propozycje „Inne”","poll.pickFirst":"Najpierw wybierz opcję.",
+    "poll.otherRequired":"Powiedz nam, co masz na myśli, wybierając „Inne”.","poll.alreadyVoted":"Wygląda na to, że już oddałeś głos.",
+    "choice.fisher":"Fisher House Foundation","choice.wwp":"Wounded Warrior Project",
+    "choice.sowf":"Special Operations Warrior Foundation","choice.mcsf":"Marine Corps Scholarship Fund",
+    "choice.other":"Inne (podaj jakie)","team.heading":"Zespół",
+    "team.addBtn":"+ Dodaj się","team.empty":"Nikt jeszcze nie zapisał się na listę — bądź pierwszy!",
+    "team.codeHeading":"O hasłach","team.codeBody":"Aby ułatwić zachowanie anonimowości, albo po prostu dla zabawy, wysłałem każdemu uczestnikowi prywatne hasło. Możesz go użyć zamiast prawdziwego imienia, jeśli chcesz — i tak będę wiedział, że to Ty. To samo podejście stosowane w wirtualnych salach danych (virtual data rooms), w których uczestniczyłem przy innych projektach, ponieważ pomaga to osobom na różnych szczeblach zespołu czuć się swobodnie, dzieląc się szczerymi opiniami bez żadnych uprzedzeń wynikających z tego, kto jeszcze jest w pokoju. To całkowicie zależy od Ciebie: użyj prawdziwego imienia, nadanego przeze mnie pseudonimu, albo wymyśl coś swojego.",
+    "team.nameRequired":"Podaj imię!","chan.general":"Ogólne",
+    "chan.design":"Projekt Gry","chan.marketing":"Marketing i Sprzedaż",
+    "chan.fundraising":"Zbiórka Funduszy","folder.design":"Projekt Gry",
+    "folder.legal":"Biznes i Prawo","folder.marketing":"Marketing",
+    "folder.financials":"Finanse","folder.misc":"Różne",
+    "about.missionHeading":"Nasza misja","about.missionFull":"Pełna misja pojawi się wkrótce. W skrócie: NUTS! to niewielki projekt z wielkim sercem. Projektujemy grę dla dzieci, produkujemy i sprzedajemy ją w ograniczonej edycji, a zyski przekazujemy na cele charytatywne. Pierwszy cel: 500 USD zysku — a potem rozwijamy się dalej.",
+    "about.companyHeading":"Firma","about.companyLine1":"<b>NUTS! LLC</b> · spółka z ograniczoną odpowiedzialnością (LLC) zarejestrowana na Florydzie · Obowiązuje od 26 sierpnia 2026",
+    "about.companyLine2":"Wszystkie koszty pierwszej edycji 50 sztuk pokrywane są osobiście. Zagłosuj na organizację charytatywną w zakładce Ankieta — każdy dolar zysku, jeśli się pojawi, trafi na zwycięski cel.","about.howHeading":"Jak działa ta strona",
+    "about.howBody":"To nasza wspólna przestrzeń projektowa. Wszystko, co tu publikujemy — dyskusje, linki do dokumentów, informacje o zespole — jest widoczne dla każdego, kto zna kod dostępu. Nic tutaj nie jest prywatne, więc trzymaj z dala naprawdę wrażliwe informacje (dane finansowe, hasła). Publikuj w <b>Dyskusjach</b>, dodawaj linki do plików w <b>Dokumentach</b> i dopisz się do strony <b>Zespół</b>, żebyśmy wiedzieli, kto jest kim.","footer.note":"Pokój projektu NUTS! · wspólna przestrzeń — wszyscy członkowie widzą tę samą zawartość",
+    "nm.title":"Kto tam? 🎖️","nm.sub":"Twoje imię pojawia się przy Twoich postach, aby zespół wiedział, kto co napisał.",
+    "nm.label":"Twoje imię","nm.ph":"np. Jan K.",
+    "nm.btn":"To ja","thm.title":"Nowy wątek",
+    "thm.channelLabel":"Kanał","thm.titleLabel":"Tytuł",
+    "thm.titlePh":"O czym jest ten wątek?","thm.bodyLabel":"Pierwszy post",
+    "thm.bodyPh":"Zacznij rozmowę…","thm.post":"Opublikuj wątek",
+    "common.cancel":"Anuluj","thm.attachLabel":"Załącz plik (opcjonalnie)",
+    "disc.attachBtn":"📎 Załącz","disc.deleteBtn":"Usuń",
+    "disc.youTag":"Ty","disc.deleteThreadConfirm":"Usunąć ten wątek wraz ze wszystkimi odpowiedziami? Tego nie można cofnąć.",
+    "disc.deleteReplyConfirm":"Usunąć tę odpowiedź? Tego nie można cofnąć.","dm.title":"Dodaj dokument",
+    "dm.folderLabel":"Folder","dm.titleLabel":"Tytuł",
+    "dm.titlePh":"np. Szkic zasad gry v2","dm.uploadLabel":"Prześlij plik",
+    "dm.dropText":"Kliknij, aby wybrać plik (maks. 20MB)","dm.uploading":"Przesyłanie…",
+    "dm.or":"lub","dm.linkLabel":"Link (Google Drive, Dropbox itp.)",
+    "dm.linkPh":"https://…  (użyj dla bardzo dużych plików)","dm.descLabel":"Opis / notatki",
+    "dm.descPh":"Co to jest? Coś, co warto wiedzieć?","dm.submit":"Dodaj dokument",
+    "tm.title":"Dodaj się do zespołu","tm.nameLabel":"Imię",
+    "tm.roleLabel":"Rola w projekcie","tm.rolePh":"np. Projekt gry, Marketing, Finanse",
+    "tm.contactLabel":"Kontakt (e-mail lub telefon — opcjonalnie)","tm.addMe":"Dodaj mnie",
+    "howto.title":"Dodawanie dokumentów","howto.intro1":"<b>Najprościej:</b> w oknie „Dodaj dokument” kliknij pole przesyłania i wybierz plik — zostanie zapisany bezpośrednio na stronie, a każdy będzie mógł go pobrać. Dobre rozwiązanie dla plików poniżej 20MB.",
+    "howto.intro2":"W przypadku większych plików (długie filmy, ogromne archiwa) lepiej dodać link do Google Drive lub Dropbox. Zajmie to najwyżej dwie minuty.","howto.gdriveHeading":"📗 Google Drive",
+    "howto.gdriveSteps":"<li>Prześlij plik na Dysk (przeciągnij go do <a href=\"https://drive.google.com\" target=\"_blank\" rel=\"noopener\">drive.google.com</a>).</li><li>Kliknij plik prawym przyciskiem → <b>Udostępnij</b>.</li><li>W sekcji „Dostęp ogólny” zmień <b>Ograniczony</b> na <b>Każda osoba mająca link</b> (zostaw jako Czytelnik).</li><li>Kliknij <b>Kopiuj link</b> i wklej go tutaj w „Dodaj dokument”.</li>","howto.dropboxHeading":"📘 Dropbox",
+    "howto.dropboxSteps":"<li>Prześlij plik na <a href=\"https://dropbox.com\" target=\"_blank\" rel=\"noopener\">dropbox.com</a>.</li><li>Najedź na plik → kliknij <b>Udostępnij</b> (lub Kopiuj link).</li><li>Upewnij się, że ustawienie linku to <b>Każdy z tym linkiem może wyświetlać</b>.</li><li>Skopiuj link i wklej go tutaj w „Dodaj dokument”.</li>","howto.tip":"Wskazówka: nadawaj plikom czytelne nazwy (np. <i>NUTS-budzet-v3.xlsx</i>), aby lista pozostała uporządkowana.",
+    "howto.gotIt":"Rozumiem","activity.started":"rozpoczął(a) wątek",
+    "activity.repliedIn":"odpowiedział(a) w wątku","activity.added":"dodał(a)",
+    "activity.votedPoll":"zagłosował(a) w ankiecie dobroczynnej","activity.empty":"Na razie cicho. Załóż wątek albo dodaj dokument, żeby coś się działo.",
+    "activity.someone":"Ktoś","ago.justNow":"przed chwilą",
+    "ago.mAgo":" min temu","ago.hAgo":" godz. temu",
+    "count.days":"dni","count.hours":"godz.",
+    "count.mins":"min","count.launched":"Wystartowało!",
+    "alert.saveFail":"Ups — to się nie zapisało. Sprawdź połączenie i spróbuj ponownie.","alert.raisedPrompt":"Kwota zebrana do tej pory (tylko liczby):",
+    "alert.numbersOnly":"Proszę podać tylko liczby.",
   }
 };
 let currentLang = 'en';
@@ -766,15 +1000,18 @@ async function sSet(key, val, shared){
 }
 
 /* ================= language ================= */
+const SUPPORTED_LANGS = ['en','pt','es','pl'];
+const LOCALE_MAP = {en:'en', pt:'pt-BR', es:'es-MX', pl:'pl'};
 function applyLang(lang){
-  currentLang = (lang === 'pt') ? 'pt' : 'en';
-  document.documentElement.lang = currentLang === 'pt' ? 'pt-BR' : 'en';
+  currentLang = SUPPORTED_LANGS.includes(lang) ? lang : 'en';
+  document.documentElement.lang = LOCALE_MAP[currentLang] || 'en';
   document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent = t(el.dataset.i18n); });
   document.querySelectorAll('[data-i18n-html]').forEach(el=>{ el.innerHTML = t(el.dataset.i18nHtml); });
   document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ el.placeholder = t(el.dataset.i18nPh); });
-  const be = document.getElementById('lang-btn-en'), bp = document.getElementById('lang-btn-pt');
-  if(be) be.classList.toggle('on', currentLang==='en');
-  if(bp) bp.classList.toggle('on', currentLang==='pt');
+  SUPPORTED_LANGS.forEach(l=>{
+    const btn = document.getElementById('lang-btn-'+l);
+    if(btn) btn.classList.toggle('on', currentLang===l);
+  });
 }
 async function setLang(lang){
   applyLang(lang);
@@ -933,7 +1170,7 @@ function ago(ts){
   if(s<60) return t('ago.justNow');
   if(s<3600) return Math.floor(s/60)+t('ago.mAgo');
   if(s<86400) return Math.floor(s/3600)+t('ago.hAgo');
-  return new Date(ts).toLocaleDateString(currentLang==='pt' ? 'pt-BR' : undefined, {month:'short',day:'numeric'});
+  return new Date(ts).toLocaleDateString(LOCALE_MAP[currentLang] || 'en', {month:'short',day:'numeric'});
 }
 function renderThreads(){
   const list = threadsCache[curChan] || [];
@@ -1128,7 +1365,7 @@ function renderDocs(){
     return `
     <div class="doc">
       <div class="ic">${icon}</div>
-      <div>
+      <div class="doc-body">
         <h3>${primaryLink ? `<a href="${esc(primaryLink)}" target="_blank" rel="noopener">${linkLabel}</a>` : esc(d.title)}</h3>
         ${d.desc ? `<p>${esc(d.desc)}</p>` : ''}
         <div class="meta">${t('docs.addedBy')} ${esc(d.addedBy)} · ${ago(d.ts)}${isFile ? `<span class="filesize-pill">${fmtBytes(d.fileSize||0)}</span>` : ''}${(isFile && d.url) ? ` · <a href="${esc(d.url)}" target="_blank" rel="noopener">${t('docs.alsoLinked')} ↗</a>` : ''}</div>
