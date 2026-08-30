@@ -211,6 +211,32 @@
   .lang-toggle button.on{opacity:1;background:var(--shell)}
   .lang-toggle button:focus-visible{outline:3px solid var(--acorn);outline-offset:1px}
   /* ---------- responsive: tablets & large phones ---------- */
+  /* ---------- John J. chat widget ---------- */
+  .johnj-fab{position:fixed;bottom:20px;right:20px;z-index:90;width:56px;height:56px;border-radius:50%;background:var(--acorn);color:#fff;border:none;box-shadow:0 6px 18px rgba(62,42,26,.28);font-size:26px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .12s,transform .12s}
+  .johnj-fab:hover{background:var(--acorn-deep);transform:translateY(-1px)}
+  .johnj-panel{position:fixed;bottom:88px;right:20px;z-index:90;width:360px;max-width:calc(100vw - 24px);height:480px;max-height:70vh;background:var(--card);border:2px solid var(--shell);border-radius:20px;box-shadow:0 14px 40px rgba(62,42,26,.28);display:none;flex-direction:column;overflow:hidden}
+  .johnj-panel.open{display:flex}
+  .johnj-header{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:2px solid var(--shell);background:var(--paper);flex:none}
+  .johnj-avatar{width:38px;height:38px;border-radius:50%;background:var(--acorn);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Black Ops One',system-ui;font-weight:800;font-size:15px;flex:none}
+  .johnj-header-text{flex:1;min-width:0}
+  .johnj-header-text b{font-size:15px}
+  .johnj-sub{font-size:11px;color:var(--ink-soft);font-weight:600;line-height:1.3}
+  .johnj-close{background:transparent;border:none;font-size:20px;line-height:1;color:var(--ink-soft);cursor:pointer;padding:4px;flex:none}
+  .johnj-close:hover{color:var(--rust)}
+  .johnj-messages{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+  .jj-msg{max-width:85%;padding:9px 12px;border-radius:14px;font-size:14px;line-height:1.45;overflow-wrap:anywhere;white-space:pre-wrap}
+  .jj-msg.user{align-self:flex-end;background:var(--acorn);color:#fff;border-bottom-right-radius:4px}
+  .jj-msg.bot{align-self:flex-start;background:var(--paper);border:1.5px solid var(--shell);border-bottom-left-radius:4px}
+  .jj-msg.thinking{font-style:italic;color:var(--ink-soft)}
+  .johnj-input-row{display:flex;gap:8px;padding:12px;border-top:2px solid var(--shell);background:var(--paper);flex:none}
+  .johnj-input-row textarea{flex:1;border:2px solid var(--shell);border-radius:12px;padding:8px 10px;resize:none;max-height:80px;font-size:16px;font-family:'Saira',sans-serif}
+  .johnj-input-row textarea:focus{border-color:var(--acorn);outline:none}
+
+  @media (max-width:480px){
+    .johnj-fab{bottom:14px;right:14px;width:50px;height:50px;font-size:22px}
+    .johnj-panel{bottom:74px;right:8px;width:calc(100vw - 16px);height:66vh}
+  }
+
   @media (max-width:900px){
     nav{padding-right:96px}
   }
@@ -453,6 +479,23 @@
 
     <div class="footer-note" data-i18n="footer.note">NUTS! project room · shared workspace — all members see the same content</div>
   </div>
+
+  <button class="johnj-fab" onclick="toggleChat()" aria-label="Chat with John J." title="John J.">💬</button>
+  <div class="johnj-panel" id="johnj-panel">
+    <div class="johnj-header">
+      <div class="johnj-avatar">JJ</div>
+      <div class="johnj-header-text">
+        <b data-i18n="jj.name">John J.</b>
+        <div class="johnj-sub" data-i18n="jj.sub">Ask about the project, documents, or discussions</div>
+      </div>
+      <button class="johnj-close" onclick="toggleChat()" aria-label="Close">✕</button>
+    </div>
+    <div class="johnj-messages" id="johnj-messages"></div>
+    <div class="johnj-input-row">
+      <textarea id="johnj-input" rows="1" data-i18n-ph="jj.placeholder" placeholder="Ask a question…" onkeydown="onJJKeydown(event)"></textarea>
+      <button class="btn green small" onclick="sendChatMessage()" data-i18n="jj.send">Send</button>
+    </div>
+  </div>
 </div>
 
 <!-- ================= MODALS ================= -->
@@ -671,7 +714,11 @@ const I18N = {
     "ago.justNow":"just now","ago.mAgo":"m ago","ago.hAgo":"h ago",
     "count.days":"days","count.hours":"hours","count.mins":"mins","count.launched":"Launched!",
     "alert.saveFail":"Hmm — that didn't save. Check your connection and try again.",
-    "alert.raisedPrompt":"Amount raised so far (numbers only):","alert.numbersOnly":"Numbers only, please."
+    "alert.raisedPrompt":"Amount raised so far (numbers only):","alert.numbersOnly":"Numbers only, please.",
+    "jj.name":"John J.","jj.sub":"Ask about the project, documents, or discussions","jj.placeholder":"Ask a question…","jj.send":"Send",
+    "jj.greeting":"Hi, I'm John J. — ask me anything about NUTS!: the game, documents, discussions, the team, or where things stand.",
+    "jj.thinking":"Thinking…","jj.notConfigured":"Chat isn't set up yet — ask the site admin to add a Gemini API key.",
+    "jj.fail":"Something went wrong — check your connection and try again."
   },
   pt: {
     "gate.sub":"Espaço do projeto · somente para pessoas autorizadas","gate.ph":"Código de acesso","gate.btn":"Entrar",
@@ -752,7 +799,11 @@ const I18N = {
     "ago.justNow":"agora mesmo","ago.mAgo":"min atrás","ago.hAgo":"h atrás",
     "count.days":"dias","count.hours":"horas","count.mins":"min","count.launched":"Lançado!",
     "alert.saveFail":"Ops — isso não foi salvo. Verifique sua conexão e tente novamente.",
-    "alert.raisedPrompt":"Valor arrecadado até agora (somente números):","alert.numbersOnly":"Somente números, por favor."
+    "alert.raisedPrompt":"Valor arrecadado até agora (somente números):","alert.numbersOnly":"Somente números, por favor.",
+    "jj.name":"John J.","jj.sub":"Pergunte sobre o projeto, os documentos ou as discussões","jj.placeholder":"Faça uma pergunta…","jj.send":"Enviar",
+    "jj.greeting":"Oi, eu sou o John J. — pergunte qualquer coisa sobre o NUTS!: o jogo, os documentos, as discussões, a equipe ou como as coisas estão indo.",
+    "jj.thinking":"Pensando…","jj.notConfigured":"O chat ainda não foi configurado — peça ao administrador do site para adicionar uma chave da API do Gemini.",
+    "jj.fail":"Algo deu errado — verifique sua conexão e tente novamente."
   },
   es: {
     "gate.sub":"Espacio de trabajo del proyecto · solo personal autorizado","gate.ph":"Código de acceso",
@@ -839,6 +890,10 @@ const I18N = {
     "count.mins":"min","count.launched":"¡Lanzado!",
     "alert.saveFail":"Uy — eso no se guardó. Revisa tu conexión e inténtalo de nuevo.","alert.raisedPrompt":"Monto recaudado hasta ahora (solo números):",
     "alert.numbersOnly":"Solo números, por favor.",
+    "jj.name":"John J.","jj.sub":"Pregunta sobre el proyecto, los documentos o los debates","jj.placeholder":"Haz una pregunta…","jj.send":"Enviar",
+    "jj.greeting":"Hola, soy John J. — pregúntame lo que quieras sobre NUTS!: el juego, los documentos, los debates, el equipo o cómo van las cosas.",
+    "jj.thinking":"Pensando…","jj.notConfigured":"El chat aún no está configurado — pide al administrador del sitio que agregue una clave de API de Gemini.",
+    "jj.fail":"Algo salió mal — revisa tu conexión e inténtalo de nuevo.",
   },
   pl: {
     "gate.sub":"Przestrzeń robocza projektu · tylko dla upoważnionych osób","gate.ph":"Kod dostępu",
@@ -925,6 +980,10 @@ const I18N = {
     "count.mins":"min","count.launched":"Wystartowało!",
     "alert.saveFail":"Ups — to się nie zapisało. Sprawdź połączenie i spróbuj ponownie.","alert.raisedPrompt":"Kwota zebrana do tej pory (tylko liczby):",
     "alert.numbersOnly":"Proszę podać tylko liczby.",
+    "jj.name":"John J.","jj.sub":"Zapytaj o projekt, dokumenty lub dyskusje","jj.placeholder":"Zadaj pytanie…","jj.send":"Wyślij",
+    "jj.greeting":"Cześć, jestem John J. — zapytaj mnie o cokolwiek związanego z NUTS!: o grę, dokumenty, dyskusje, zespół albo aktualny stan projektu.",
+    "jj.thinking":"Myślę…","jj.notConfigured":"Czat nie został jeszcze skonfigurowany — poproś administratora strony o dodanie klucza API Gemini.",
+    "jj.fail":"Coś poszło nie tak — sprawdź połączenie i spróbuj ponownie."
   }
 };
 let currentLang = 'en';
@@ -938,6 +997,9 @@ const CODE = 'ROCHAMBEAU';
 const GOAL = 500;
 const PLANNED_RUN = 50;
 const TRANSLATE_API_KEY = 'AIzaSyDhbFaWU9uChzj0hNChR45i-G2xfjoGvdg'; // fill in with a Google Cloud Translation API key restricted to this site's domain
+const GEMINI_API_KEY = ''; // fill in with a Gemini API key from aistudio.google.com
+const GEMINI_MODEL = 'gemini-3.1-flash-lite';
+const LANG_NAMES = {en:'English', pt:'Portuguese', es:'Spanish', pl:'Polish'};
 const LAUNCH = new Date('2026-11-26T00:00:00');
 const CHANNELS = [
   {id:'general', ic:'🌰', key:'chan.general'},
@@ -1673,9 +1735,140 @@ function renderActivity(){
 }
 
 /* ================= expose handlers for inline onclick ================= */
+/* ================= John J. chatbot ================= */
+let chatMessages = [];
+let chatOpen = false;
+let chatBusy = false;
+
+function buildSiteContext(){
+  const lines = [];
+  lines.push('=== MISSION & COMPANY ===');
+  lines.push(I18N.en['about.missionFull']);
+  lines.push(I18N.en['dash.storyLegal']);
+  lines.push('');
+  lines.push('=== GAME DESIGN & RULES (NUTS!) ===');
+  lines.push('NUTS! is a two-player deduction game moderated by a third player, the President (parent/adult). One player (One Star, white hat) receives a secret from the President and may respond to questions only non-verbally (nodding, shaking head, thumbs up/down, facial expressions — never speaking or miming). The other player (Three Star, black hat) has six minutes to guess the secret by asking yes/no questions. If One Star speaks or breaks the non-verbal rule, both players lose the round. If Three Star guesses correctly in time, both players win and get a prize chosen by the President. Players swap hats and roles each round. Secrets can come from a printed card/list, or from a standard 52-card playing deck (one secret per card, categorized by suit: Spades=Animals, Hearts=Foods & Treats, Diamonds=Everyday Objects, Clubs=Actions & Feelings) as a free alternative to printed cards. Each unit ships with two hats, two removable star patches, a secrets card/list, a note on the NUTS! origin story, and a rotating biography of a U.S. General or Admiral.');
+  lines.push("The name comes from Brigadier General Anthony McAuliffe's famous one-word reply, \"Nuts!\", to a German surrender demand at Bastogne during the Battle of the Bulge in December 1944 — a story the project's founder heard from a retired Marine Corps Colonel decades ago, and chose as a lesson in never giving up.");
+  lines.push('');
+  lines.push('=== FUNDRAISING & PRODUCTION STATUS ===');
+  lines.push(`Amount raised: $${(settingsCache.raised||0).toLocaleString()} of a $${GOAL} profit goal.`);
+  lines.push(`Planned production run: ${PLANNED_RUN} units.`);
+  lines.push(`Units produced so far: ${settingsCache.unitsProduced||0}.`);
+  lines.push(`Units shipped so far: ${settingsCache.unitsShipped||0}.`);
+  lines.push(`Units sold so far: ${settingsCache.unitsSold||0}.`);
+  lines.push('');
+  lines.push('=== TEAM ===');
+  if(teamCache.length){
+    teamCache.forEach(m => lines.push(`- ${m.name}${m.role ? ' — ' + m.role : ''}`));
+  } else {
+    lines.push('No team members listed yet.');
+  }
+  lines.push('');
+  lines.push('=== CHARITY POLL RESULTS ===');
+  const counts = {}; POLL_CHOICES.forEach(c=>counts[c.id]=0);
+  const otherTexts = [];
+  Object.values(pollCache).forEach(v=>{
+    if(counts[v.choice]!==undefined) counts[v.choice]++;
+    if(v.choice==='other' && v.otherText) otherTexts.push(v.otherText);
+  });
+  POLL_CHOICES.forEach(c => lines.push(`- ${I18N.en[c.key]}: ${counts[c.id]||0} votes`));
+  if(otherTexts.length) lines.push(`"Other" suggestions: ${otherTexts.join('; ')}`);
+  lines.push('');
+  lines.push('=== DOCUMENTS (titles/descriptions only — file contents inside uploaded files are NOT accessible to you) ===');
+  if(docsCache.length){
+    docsCache.forEach(d => {
+      const folder = (FOLDERS.find(f=>f.id===d.folder)||{}).key;
+      lines.push(`- [${folder ? I18N.en[folder] : d.folder}] "${d.title}"${d.desc ? ' — ' + d.desc : ''} (added by ${d.addedBy})`);
+    });
+  } else {
+    lines.push('No documents uploaded yet.');
+  }
+  lines.push('');
+  lines.push('=== DISCUSSION THREADS (all channels) ===');
+  let anyThreads = false;
+  CHANNELS.forEach(c => {
+    const list = threadsCache[c.id] || [];
+    list.forEach(th => {
+      anyThreads = true;
+      lines.push(`[${I18N.en[c.key]}] "${th.title}" — ${th.author}: ${th.body}`);
+      (th.replies||[]).forEach(r => lines.push(`  ↳ ${r.author}: ${r.body}`));
+    });
+  });
+  if(!anyThreads) lines.push('No discussion threads yet.');
+  return lines.join('\n');
+}
+
+async function callGemini(history){
+  const context = buildSiteContext();
+  const langName = LANG_NAMES[currentLang] || 'English';
+  const systemText = `You are John J., a friendly, knowledgeable assistant embedded in the NUTS! project's website. You help visitors and team members with questions about the project: its mission, game design and rules, business/legal structure, documents, discussions, team, fundraising, and production status. Answer ONLY using the CONTEXT below. If something isn't covered in it, say plainly that you don't have that information rather than guessing or making things up. You can see document titles, folders, and descriptions, but NOT the actual contents of uploaded files — if asked about what's inside a specific file, say so and suggest they open it from the Documents tab. Keep answers concise, warm, and conversational. Respond in ${langName} unless the person writes in a different language, in which case reply in their language instead.\n\nCONTEXT:\n${context}`;
+  const contents = history.map(m => ({ role: m.role, parts: [{ text: m.text }] }));
+  const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_API_KEY },
+    body: JSON.stringify({ contents, systemInstruction: { parts: [{ text: systemText }] } })
+  });
+  if(!resp.ok) throw new Error('gemini request failed: ' + resp.status);
+  const data = await resp.json();
+  const text = data && data.candidates && data.candidates[0] && data.candidates[0].content &&
+               data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text;
+  if(!text) throw new Error('no response text from gemini');
+  return text;
+}
+
+function renderChatMessages(){
+  const el = document.getElementById('johnj-messages');
+  if(!el) return;
+  el.innerHTML = chatMessages.map(m => {
+    const cls = m.role === 'user' ? 'user' : (m.thinking ? 'bot thinking' : 'bot');
+    return `<div class="jj-msg ${cls}">${esc(m.text)}</div>`;
+  }).join('');
+  el.scrollTop = el.scrollHeight;
+}
+function toggleChat(){
+  chatOpen = !chatOpen;
+  const panel = document.getElementById('johnj-panel');
+  if(panel) panel.classList.toggle('open', chatOpen);
+  if(chatOpen && chatMessages.length===0){
+    chatMessages.push({ role:'model', text: t('jj.greeting') });
+    renderChatMessages();
+  }
+}
+function onJJKeydown(e){
+  if(e.key === 'Enter' && !e.shiftKey){
+    e.preventDefault();
+    sendChatMessage();
+  }
+}
+async function sendChatMessage(){
+  if(chatBusy) return;
+  const input = document.getElementById('johnj-input');
+  const text = input.value.trim();
+  if(!text) return;
+  if(!GEMINI_API_KEY){ alert(t('jj.notConfigured')); return; }
+  chatMessages.push({ role:'user', text });
+  input.value = '';
+  chatBusy = true;
+  chatMessages.push({ role:'model', text: t('jj.thinking'), thinking:true });
+  renderChatMessages();
+  try{
+    const historyForApi = chatMessages.filter(m=>!m.thinking);
+    const reply = await callGemini(historyForApi);
+    chatMessages = chatMessages.filter(m=>!m.thinking);
+    chatMessages.push({ role:'model', text: reply });
+  }catch(e){
+    console.error('John J. chat failed', e);
+    chatMessages = chatMessages.filter(m=>!m.thinking);
+    chatMessages.push({ role:'model', text: t('jj.fail') });
+  }
+  chatBusy = false;
+  renderChatMessages();
+}
+
 Object.assign(window, { tryUnlock, showTab, openModal, closeModal, saveName, editRaised,
   pickChan, openThreadModal, createThread, toggleThread, reply, resetThreadForm,
   onThreadFilePicked, onReplyFilePicked, deleteThread, deleteReply,
   pickFolder, addDoc, addMember, onFilePicked, deleteDoc, resetDocForm,
-  onPollChoiceChange, castVote, setLang, openUnitsModal, saveUnits, deleteMember, translatePost });
+  onPollChoiceChange, castVote, setLang, openUnitsModal, saveUnits, deleteMember, translatePost,
+  toggleChat, onJJKeydown, sendChatMessage });
 </script>
