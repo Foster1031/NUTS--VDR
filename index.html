@@ -668,6 +668,7 @@ const I18N = {
     "poll.votedThanks":"Thanks for weighing in — one vote per person, so this is locked in.",
     "poll.seeOther":"See \"Other\" suggestions","poll.pickFirst":"Pick an option first.",
     "poll.otherRequired":"Let us know what \"Other\" means to you.","poll.alreadyVoted":"Looks like you've already voted.",
+    "poll.changeVoteBtn":"Change your vote","poll.updateVoteBtn":"Update your vote",
     "choice.fisher":"Fisher House Foundation","choice.wwp":"Wounded Warrior Project",
     "choice.sowf":"Special Operations Warrior Foundation","choice.mcsf":"Marine Corps Scholarship Fund","choice.other":"Other (please specify)",
     "team.heading":"Team","team.addBtn":"+ Add yourself","team.empty":"Nobody's signed the roster yet — be first!",
@@ -753,6 +754,7 @@ const I18N = {
     "poll.votedThanks":"Obrigado por participar — um voto por pessoa, então seu voto está confirmado.",
     "poll.seeOther":"Ver sugestões de \"Outro\"","poll.pickFirst":"Escolha uma opção primeiro.",
     "poll.otherRequired":"Diga o que você quis dizer com \"Outro\".","poll.alreadyVoted":"Parece que você já votou.",
+    "poll.changeVoteBtn":"Mudar seu voto","poll.updateVoteBtn":"Atualizar seu voto",
     "choice.fisher":"Fisher House Foundation","choice.wwp":"Wounded Warrior Project",
     "choice.sowf":"Special Operations Warrior Foundation","choice.mcsf":"Marine Corps Scholarship Fund","choice.other":"Outro (especifique)",
     "team.heading":"Equipe","team.addBtn":"+ Adicionar-se","team.empty":"Ainda ninguém se cadastrou — seja o primeiro!",
@@ -841,6 +843,7 @@ const I18N = {
     "poll.votedPrefix":"✅ Votaste por","poll.votedThanks":"Gracias por participar — un voto por persona, así que esto queda registrado.",
     "poll.seeOther":"Ver sugerencias de \"Otro\"","poll.pickFirst":"Primero elige una opción.",
     "poll.otherRequired":"Cuéntanos qué significa \"Otro\" para ti.","poll.alreadyVoted":"Parece que ya votaste.",
+    "poll.changeVoteBtn":"Cambiar tu voto","poll.updateVoteBtn":"Actualizar tu voto",
     "choice.fisher":"Fisher House Foundation","choice.wwp":"Wounded Warrior Project",
     "choice.sowf":"Special Operations Warrior Foundation","choice.mcsf":"Marine Corps Scholarship Fund",
     "choice.other":"Otro (especifique)","team.heading":"Equipo",
@@ -931,6 +934,7 @@ const I18N = {
     "poll.votedPrefix":"✅ Zagłosowałeś na","poll.votedThanks":"Dzięki za udział — jeden głos na osobę, więc Twój wybór jest już zapisany.",
     "poll.seeOther":"Zobacz propozycje „Inne”","poll.pickFirst":"Najpierw wybierz opcję.",
     "poll.otherRequired":"Powiedz nam, co masz na myśli, wybierając „Inne”.","poll.alreadyVoted":"Wygląda na to, że już oddałeś głos.",
+    "poll.changeVoteBtn":"Zmień swój głos","poll.updateVoteBtn":"Zaktualizuj swój głos",
     "choice.fisher":"Fisher House Foundation","choice.wwp":"Wounded Warrior Project",
     "choice.sowf":"Special Operations Warrior Foundation","choice.mcsf":"Marine Corps Scholarship Fund",
     "choice.other":"Inne (podaj jakie)","team.heading":"Zespół",
@@ -1027,6 +1031,7 @@ let curChan = 'general';
 let curFolder = 'design';
 let threadsCache = {}, docsCache = [], teamCache = [], settingsCache = {raised:0, unitsProduced:0, unitsShipped:0, unitsSold:0};
 let pollCache = {};
+let pollEditMode = false;
 let translationState = {}; // key -> {show, text, lang, loading}
 let pickedFile = null;
 let pendingThreadFile = null;
@@ -1672,22 +1677,27 @@ function renderPoll(){
     ${otherTexts.length ? `<details class="poll-other-list"><summary>${t('poll.seeOther')} (${otherTexts.length})</summary><ul>${otherTexts.map(ot=>`<li>${esc(ot)}</li>`).join('')}</ul></details>` : ''}`;
 
   let formHtml;
-  if(existing){
+  if(existing && !pollEditMode){
     const choiceObj = POLL_CHOICES.find(c=>c.id===existing.choice);
     const label = choiceObj ? t(choiceObj.key) : existing.choice;
-    formHtml = `<div class="poll-voted-note"><b>${t('poll.votedPrefix')} ${esc(label)}</b>${existing.choice==='other' && existing.otherText ? `: “${esc(existing.otherText)}”` : ''}. ${t('poll.votedThanks')}</div>`;
+    formHtml = `<div class="poll-voted-note">
+      <b>${t('poll.votedPrefix')} ${esc(label)}</b>${existing.choice==='other' && existing.otherText ? `: “${esc(existing.otherText)}”` : ''}. ${t('poll.votedThanks')}
+      <div style="margin-top:10px"><button class="btn ghost small" onclick="startPollEdit()">${t('poll.changeVoteBtn')}</button></div>
+    </div>`;
   } else {
+    const isEdit = !!existing;
     formHtml = `
       <div class="poll-voted-note" style="border-color:var(--shell)">
-        <h3 style="margin-bottom:6px">${t('poll.castVote')}</h3>
+        <h3 style="margin-bottom:6px">${isEdit ? t('poll.updateVoteBtn') : t('poll.castVote')}</h3>
         ${POLL_CHOICES.map(c=>`
           <label class="poll-radio-row">
-            <input type="radio" name="poll-choice" value="${c.id}" onchange="onPollChoiceChange()">
+            <input type="radio" name="poll-choice" value="${c.id}" ${isEdit && existing.choice===c.id ? 'checked' : ''} onchange="onPollChoiceChange()">
             <span>${esc(t(c.key))}</span>
           </label>`).join('')}
-        <input id="poll-other-text" class="poll-other-input" style="display:none" placeholder="${t('poll.otherPh')}">
+        <input id="poll-other-text" class="poll-other-input" style="display:${isEdit && existing.choice==='other' ? 'block' : 'none'}" placeholder="${t('poll.otherPh')}" value="${isEdit && existing.choice==='other' ? esc(existing.otherText||'') : ''}">
         <div class="actions" style="margin-top:14px;justify-content:flex-start">
-          <button class="btn green" onclick="castVote()">${t('poll.castVote')}</button>
+          <button class="btn green" onclick="castVote()">${isEdit ? t('poll.updateVoteBtn') : t('poll.castVote')}</button>
+          ${isEdit ? `<button class="btn ghost" onclick="cancelPollEdit()">${t('common.cancel')}</button>` : ''}
         </div>
       </div>`;
   }
@@ -1698,10 +1708,19 @@ function onPollChoiceChange(){
   const box = document.getElementById('poll-other-text');
   if(box) box.style.display = (sel && sel.value==='other') ? 'block' : 'none';
 }
+function startPollEdit(){
+  if(needName()) return;
+  pollEditMode = true;
+  renderPoll();
+}
+function cancelPollEdit(){
+  pollEditMode = false;
+  renderPoll();
+}
 async function castVote(){
   if(needName()) return;
   const key = normKey(me);
-  if(pollCache[key]){ alert(t('poll.alreadyVoted')); renderPoll(); return; }
+  const editing = pollEditMode;
   const sel = document.querySelector('input[name="poll-choice"]:checked');
   if(!sel){ alert(t('poll.pickFirst')); return; }
   const choice = sel.value;
@@ -1711,10 +1730,11 @@ async function castVote(){
     if(!otherText){ alert(t('poll.otherRequired')); return; }
   }
   const fresh = await sGet('poll-votes', true, {});
-  if(fresh[key]){ pollCache = fresh; alert(t('poll.alreadyVoted')); renderPoll(); return; }
+  if(fresh[key] && !editing){ pollCache = fresh; alert(t('poll.alreadyVoted')); renderPoll(); return; }
   fresh[key] = {choice, otherText, name: me, ts: Date.now()};
   if(await sSet('poll-votes', fresh, true)){
     pollCache = fresh;
+    pollEditMode = false;
     renderPoll(); renderActivity();
   }
 }
@@ -1870,5 +1890,6 @@ Object.assign(window, { tryUnlock, showTab, openModal, closeModal, saveName, edi
   onThreadFilePicked, onReplyFilePicked, deleteThread, deleteReply,
   pickFolder, addDoc, addMember, onFilePicked, deleteDoc, resetDocForm,
   onPollChoiceChange, castVote, setLang, openUnitsModal, saveUnits, deleteMember, translatePost,
+  startPollEdit, cancelPollEdit,
   toggleChat, onJJKeydown, sendChatMessage });
 </script>
