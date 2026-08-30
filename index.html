@@ -238,7 +238,7 @@
   }
 
   @media (max-width:900px){
-    nav{padding-right:96px}
+    nav{padding-right:118px}
   }
 
   /* ---------- responsive: phones ---------- */
@@ -250,7 +250,7 @@
     header .wordmark{font-size:32px;letter-spacing:2px}
     .gate-card .wordmark{font-size:38px;letter-spacing:2px}
     .gate-card{padding:32px 22px}
-    nav{padding:10px 6px;padding-right:78px;gap:6px}
+    nav{padding:10px 6px;padding-right:100px;gap:6px}
     nav button{padding:7px 12px;font-size:13.5px}
     .wrap{padding:0 12px 90px}
     .card{padding:16px}
@@ -264,7 +264,7 @@
 </style>
 
 <!-- ================= LANGUAGE TOGGLE ================= -->
-<div class="lang-toggle" id="lang-toggle" role="group" aria-label="Language / Idioma / Język">
+<div class="lang-toggle" id="lang-toggle" role="group" aria-label="Language / Idioma / Język / Lingua">
   <button id="lang-btn-en" class="on" onclick="setLang('en')" title="English" aria-label="English">
     <svg viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <rect width="20" height="14" fill="#B22234"/>
@@ -305,6 +305,13 @@
     <svg viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <rect width="20" height="7" fill="#fff"/>
       <rect y="7" width="20" height="7" fill="#DC143C"/>
+    </svg>
+  </button>
+  <button id="lang-btn-it" onclick="setLang('it')" title="Italiano" aria-label="Italiano">
+    <svg viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="6.67" height="14" fill="#009246"/>
+      <rect x="6.67" width="6.67" height="14" fill="#fff"/>
+      <rect x="13.34" width="6.66" height="14" fill="#CE2B37"/>
     </svg>
   </button>
 </div>
@@ -988,6 +995,96 @@ const I18N = {
     "jj.greeting":"Cześć, jestem John J. — zapytaj mnie o cokolwiek związanego z NUTS!: o grę, dokumenty, dyskusje, zespół albo aktualny stan projektu.",
     "jj.thinking":"Myślę…","jj.notConfigured":"Czat nie został jeszcze skonfigurowany — poproś administratora strony o dodanie klucza API Gemini.",
     "jj.fail":"Coś poszło nie tak — sprawdź połączenie i spróbuj ponownie."
+  },
+  it: {
+    "gate.sub":"Area di lavoro del progetto · solo per personale autorizzato","gate.ph":"Codice di accesso",
+    "gate.btn":"Autentica","gate.err":"Accesso negato — chiedi il codice a un membro del team.",
+    "header.sub":"Progetto di Gioco per Bambini · Si Gioca per Beneficenza","nav.dash":"🏠 Bacheca",
+    "nav.disc":"💬 Discussioni","nav.docs":"📁 Documenti",
+    "nav.poll":"🗳️ Sondaggio","nav.team":"🐿️ Squadra",
+    "nav.about":"🌰 Info","dash.goalPill":"Obiettivo di raccolta fondi",
+    "dash.raisedOf":"raccolti su","dash.profitGoal":"di obiettivo di profitto",
+    "dash.goalNote":"Ogni dollaro di profitto va in beneficenza. Raggiunto l'obiettivo, andiamo avanti da lì!","dash.updateBtn":"Aggiorna importo",
+    "dash.kpiPill":"Produzione e Vendite","dash.updateUnitsBtn":"Aggiorna unità",
+    "dash.kpiProduced":"Unità Prodotte","dash.kpiShipped":"Unità Spedite",
+    "dash.kpiSold":"Unità Vendute","dash.kpiRemaining":"Rimanenti da Vendere",
+    "dash.kpiOf":"su","um.title":"Aggiorna i numeri di produzione e vendite",
+    "um.save":"Salva","dash.launchPill":"Obiettivo di lancio",
+    "dash.launchTitle":"Giorno del Ringraziamento 2026","dash.missionPill":"Missione",
+    "dash.missionShort":"Stiamo creando un gioco per bambini, vendendolo in edizione limitata e devolvendo i profitti in beneficenza. La missione completa arriverà presto — vedi la scheda Info.","dash.storyHeading":"La Storia Dietro NUTS!",
+    "dash.storyCapstone":"Questo progetto funge anche da mio capstone per un corso di Executive Education del MIT, Applied Agentic AI for Organizational Transformation. Sto usando il corso e il progetto capstone come sviluppo completo, da zero, di una nuova attività — che copre ricerca, progettazione e posizionamento del prodotto, gestione operativa, marketing, finanza e sviluppo di KPI, oltre all'uso di agenti IA e tecnologia per costruire questo sito e tutti i materiali che contiene. È stato un progetto divertente e istruttivo, che mi ha insegnato molto sulla funzionalità pratica dei sistemi IA avanzati. Ho pensato anche che sarebbe stato bello se avesse avuto uno scopo filantropico — da qui il gioco e il suo piccolo obiettivo filantropico.","dash.storyOrigin":"Quasi trent'anni fa, un Colonnello in pensione del Corpo dei Marines mi raccontò la storia del Generale di Brigata Anthony McAuliffe, che comandava la 101ª Divisione Aviotrasportata assediata a Bastogne durante la Battaglia delle Ardenne. Quando le forze tedesche chiesero la sua resa nel dicembre 1944, l'intera risposta di McAuliffe fu una sola parola: “Nuts!” (qualcosa come “E come no!”). La 101ª tenne la linea — e quella storia è rimasta con me da allora come lezione a non arrendersi mai, ed è esattamente per questo che mi è sembrato il nome giusto per questo progetto. <a href=\"https://militaryhistorynow.com/2020/09/15/nuts-the-story-of-the-famous-american-reply-to-the-german-surrender-ultimatum-at-bastogne/\" target=\"_blank\" rel=\"noopener\">Leggi la storia completa di Bastogne →</a>",
+    "dash.storyLegal":"NUTS! è costituita come una LLC della Florida. Tutti i costi di questa prima produzione vengono coperti personalmente — chiunque desideri contribuire con il proprio tempo, le proprie idee, o semplicemente acquistare un'unità per sé, è il benvenuto. La prima produzione è limitata a 50 unità e, se il progetto genera un profitto, andrà interamente in beneficenza (vedi la scheda Sondaggio per aiutare a scegliere quale). L'entità legale rimarrà attiva dopo la conclusione di questa prima fase e potrà essere riutilizzata per progetti futuri.","dash.activityHeading":"Attività recente",
+    "disc.heading":"Discussioni","disc.newThread":"+ Nuova discussione",
+    "disc.empty":"Ancora nessuna discussione qui — inizia la prima!","disc.postSingular":"messaggio",
+    "disc.postPlural":"messaggi","disc.replyPh":"Scrivi una risposta…",
+    "disc.replyBtn":"Rispondi","disc.threadMoved":"Questa discussione è appena cambiata — aggiornamento in corso.",
+    "disc.titleAndBody":"Un titolo e un primo messaggio bastano per iniziare.","docs.heading":"Documenti",
+    "docs.howtoBtn":"Come collegare un file","docs.addBtn":"+ Aggiungi documento",
+    "docs.emptyPrefix":"Ancora nulla in","docs.emptySuffix":". Aggiungi il primo documento!",
+    "docs.addedBy":"Aggiunto da","docs.alsoLinked":"collegato anche a",
+    "docs.removeBtn":"Rimuovi","docs.titleRequired":"Dagli un titolo così le persone sanno di cosa si tratta.",
+    "docs.needFileOrLink":"Carica un file o incolla un link.","docs.fileTooBig":"Questo file supera i 20MB. Usa invece l'opzione di link Drive/Dropbox qui sotto.",
+    "docs.uploadFail":"Il caricamento non è andato a buon fine — controlla la connessione e riprova.","docs.confirmRemovePrefix":"Rimuovere \"",
+    "docs.confirmRemoveSuffix":"\"? Non si può annullare.","poll.heading":"Dove dovrebbero andare i soldi?",
+    "poll.sub":"Vota l'organizzazione benefica che vorresti veder sostenuta da NUTS! Un voto a persona.","poll.voteSingular":"voto",
+    "poll.votePlural":"voti","poll.castSoFar":"espressi finora",
+    "poll.castVote":"Esprimi il tuo voto","poll.otherPh":"Dicci dove…",
+    "poll.votedPrefix":"✅ Hai votato per","poll.votedThanks":"Grazie per aver partecipato — un voto a persona, quindi la tua scelta è registrata.",
+    "poll.seeOther":"Vedi i suggerimenti \"Altro\"","poll.pickFirst":"Scegli prima un'opzione.",
+    "poll.otherRequired":"Facci sapere cosa intendi con \"Altro\".","poll.alreadyVoted":"Sembra che tu abbia già votato.",
+    "poll.changeVoteBtn":"Cambia il tuo voto","poll.updateVoteBtn":"Aggiorna il tuo voto",
+    "choice.fisher":"Fisher House Foundation","choice.wwp":"Wounded Warrior Project",
+    "choice.sowf":"Special Operations Warrior Foundation","choice.mcsf":"Marine Corps Scholarship Fund",
+    "choice.other":"Altro (specificare)","team.heading":"Squadra",
+    "team.addBtn":"+ Aggiungiti","team.empty":"Nessuno si è ancora iscritto — sii il primo!",
+    "team.codeHeading":"Le parole in codice","team.codeBody":"Per rendere più semplice restare anonimi, o solo per divertimento, ho inviato a ciascun partecipante una parola in codice privata. Usala al posto del tuo vero nome, se preferisci — saprò comunque che sei tu. È lo stesso approccio usato nelle virtual data room a cui ho partecipato in altri progetti, perché aiuta le persone a diversi livelli di un team a sentirsi a proprio agio nel condividere opinioni sincere senza alcun pregiudizio legato a chi altro è presente. Sta completamente a te: usa il tuo vero nome, il soprannome che ti ho dato, oppure inventane uno tutto tuo.",
+    "team.nameRequired":"Nome, per favore!","chan.general":"Generale",
+    "chan.design":"Design del Gioco","chan.marketing":"Marketing e Vendite",
+    "chan.fundraising":"Raccolta Fondi","folder.design":"Design del Gioco",
+    "folder.legal":"Business e Legale","folder.marketing":"Marketing",
+    "folder.financials":"Finanze","folder.misc":"Varie",
+    "about.missionHeading":"La nostra missione","about.missionFull":"La missione completa arriverà presto. In breve: NUTS! è un piccolo progetto dal grande cuore. Stiamo progettando un gioco per bambini, producendolo e vendendolo in edizione limitata, e devolvendo i profitti in beneficenza. Primo obiettivo: $500 di profitto — poi cresceremo da lì.",
+    "about.companyHeading":"L'azienda","about.companyLine1":"<b>NUTS! LLC</b> · società a responsabilità limitata della Florida · In vigore dal 26 agosto 2026",
+    "about.companyLine2":"Tutti i costi della prima produzione da 50 unità sono coperti personalmente. Vota l'organizzazione benefica nella scheda Sondaggio — ogni dollaro di profitto, se ce ne sarà, andrà alla causa vincitrice.","about.howHeading":"Come funziona questo sito",
+    "about.howBody":"Questa è la nostra sala progetto condivisa. Tutto ciò che viene pubblicato qui — discussioni, link ai documenti, informazioni sulla squadra — è visibile a chiunque abbia il codice di accesso. Niente qui è privato, quindi tieni fuori i dettagli davvero sensibili (informazioni finanziarie personali, password). Pubblica in <b>Discussioni</b>, collega i file in <b>Documenti</b> e aggiungiti alla pagina <b>Squadra</b> così sappiamo chi è chi.","footer.note":"Sala progetto NUTS! · spazio condiviso — tutti i membri vedono lo stesso contenuto",
+    "nm.title":"Chi va là? 🎖️","nm.sub":"Il tuo nome appare sui tuoi messaggi così la squadra sa chi ha detto cosa.",
+    "nm.label":"Il tuo nome","nm.ph":"es. Sam R.",
+    "nm.btn":"Sono io","thm.title":"Nuova discussione",
+    "thm.channelLabel":"Canale","thm.titleLabel":"Titolo",
+    "thm.titlePh":"Di cosa si tratta?","thm.bodyLabel":"Primo messaggio",
+    "thm.bodyPh":"Avvia la conversazione…","thm.post":"Pubblica discussione",
+    "common.cancel":"Annulla","thm.attachLabel":"Allega un file (facoltativo)",
+    "disc.attachBtn":"📎 Allega","disc.deleteBtn":"Elimina",
+    "disc.youTag":"Tu","disc.translateBtn":"🌐 Traduci",
+    "disc.showOriginal":"Mostra originale","disc.translating":"Traduzione in corso…",
+    "disc.translateFail":"Traduzione non riuscita — controlla la connessione e riprova.","disc.translateNotConfigured":"La traduzione non è ancora configurata — chiedi all'amministratore del sito di aggiungere una chiave API di traduzione.",
+    "disc.deleteThreadConfirm":"Eliminare questa discussione e tutte le risposte? Non si può annullare.","disc.deleteReplyConfirm":"Eliminare questa risposta? Non si può annullare.",
+    "dm.title":"Aggiungi un documento","dm.folderLabel":"Cartella",
+    "dm.titleLabel":"Titolo","dm.titlePh":"es. Bozza regole v2",
+    "dm.uploadLabel":"Carica un file","dm.dropText":"Clicca per scegliere un file (max 20MB)",
+    "dm.uploading":"Caricamento…","dm.or":"oppure",
+    "dm.linkLabel":"Link (Google Drive, Dropbox, ecc.)","dm.linkPh":"https://…  (usalo per file molto grandi)",
+    "dm.descLabel":"Descrizione / note","dm.descPh":"Cos'è? C'è qualcosa da sapere?",
+    "dm.submit":"Aggiungi documento","tm.title":"Aggiungiti alla squadra",
+    "tm.nameLabel":"Nome","tm.roleLabel":"Ruolo nel progetto",
+    "tm.rolePh":"es. Design del gioco, Marketing, Finanza","tm.contactLabel":"Contatto (email o telefono — facoltativo)",
+    "tm.addMe":"Aggiungimi","howto.title":"Aggiungere documenti",
+    "howto.intro1":"<b>Il modo più semplice:</b> in \"Aggiungi documento\", clicca sul riquadro di caricamento e scegli un file — viene salvato direttamente sul sito e chiunque può scaricarlo. Ottimo per file sotto i 20MB.","howto.intro2":"Per file più grandi (video lunghi, archivi enormi), collega invece a Google Drive o Dropbox. Due minuti al massimo.",
+    "howto.gdriveHeading":"📗 Google Drive","howto.gdriveSteps":"<li>Carica il file su Drive (trascinalo in <a href=\"https://drive.google.com\" target=\"_blank\" rel=\"noopener\">drive.google.com</a>).</li><li>Clicca col destro sul file → <b>Condividi</b>.</li><li>In \"Accesso generale\", cambia da <b>Con restrizioni</b> a <b>Chiunque abbia il link</b> (lascia come Visualizzatore).</li><li>Clicca su <b>Copia link</b>, poi incollalo qui in \"Aggiungi documento\".</li>",
+    "howto.dropboxHeading":"📘 Dropbox","howto.dropboxSteps":"<li>Carica il file su <a href=\"https://dropbox.com\" target=\"_blank\" rel=\"noopener\">dropbox.com</a>.</li><li>Passa il mouse sul file → clicca <b>Condividi</b> (o Copia link).</li><li>Assicurati che l'impostazione del link sia <b>Chiunque abbia questo link può visualizzare</b>.</li><li>Copia il link e incollalo qui in \"Aggiungi documento\".</li>",
+    "howto.tip":"Consiglio: nomina i file in modo chiaro (es. <i>NUTS-budget-v3.xlsx</i>) così la lista resta ordinata.","howto.gotIt":"Capito",
+    "activity.started":"ha avviato","activity.repliedIn":"ha risposto in",
+    "activity.added":"ha aggiunto","activity.votedPoll":"ha votato nel sondaggio benefico",
+    "activity.empty":"Tutto tranquillo per ora. Avvia una discussione o aggiungi un documento per smuovere le cose.","activity.someone":"Qualcuno",
+    "ago.justNow":"proprio ora","ago.mAgo":" min fa",
+    "ago.hAgo":" h fa","count.days":"giorni",
+    "count.hours":"ore","count.mins":"min",
+    "count.launched":"Lanciato!","alert.saveFail":"Ops — non è stato salvato. Controlla la connessione e riprova.",
+    "alert.raisedPrompt":"Importo raccolto finora (solo numeri):","alert.numbersOnly":"Solo numeri, per favore.",
+    "jj.name":"John J.","jj.sub":"Chiedi informazioni sul progetto, i documenti o le discussioni",
+    "jj.placeholder":"Fai una domanda…","jj.send":"Invia",
+    "jj.greeting":"Ciao, sono John J. — chiedimi qualsiasi cosa su NUTS!: il gioco, i documenti, le discussioni, la squadra, o a che punto siamo.","jj.thinking":"Sto pensando…",
+    "jj.notConfigured":"La chat non è ancora configurata — chiedi all'amministratore del sito di aggiungere una chiave API Gemini.","jj.fail":"Qualcosa è andato storto — controlla la connessione e riprova.",
   }
 };
 let currentLang = 'en';
@@ -1003,7 +1100,7 @@ const PLANNED_RUN = 50;
 const TRANSLATE_API_KEY = 'AIzaSyDhbFaWU9uChzj0hNChR45i-G2xfjoGvdg'; // fill in with a Google Cloud Translation API key restricted to this site's domain
 const GEMINI_API_KEY = 'AQ.Ab8RN6KJGc9y8ZF1psfvzgPUOUm9IeaZ8GtxUQ24jh6cpq7CrQ'; // fill in with a Gemini API key from aistudio.google.com
 const GEMINI_MODEL = 'gemini-3.1-flash-lite';
-const LANG_NAMES = {en:'English', pt:'Portuguese', es:'Spanish', pl:'Polish'};
+const LANG_NAMES = {en:'English', pt:'Portuguese', es:'Spanish', pl:'Polish', it:'Italian'};
 const LAUNCH = new Date('2026-11-26T00:00:00');
 const CHANNELS = [
   {id:'general', ic:'🌰', key:'chan.general'},
@@ -1086,8 +1183,8 @@ async function sSet(key, val, shared){
 }
 
 /* ================= language ================= */
-const SUPPORTED_LANGS = ['en','pt','es','pl'];
-const LOCALE_MAP = {en:'en', pt:'pt-BR', es:'es-MX', pl:'pl'};
+const SUPPORTED_LANGS = ['en','pt','es','pl','it'];
+const LOCALE_MAP = {en:'en', pt:'pt-BR', es:'es-MX', pl:'pl', it:'it'};
 function applyLang(lang){
   currentLang = SUPPORTED_LANGS.includes(lang) ? lang : 'en';
   document.documentElement.lang = LOCALE_MAP[currentLang] || 'en';
